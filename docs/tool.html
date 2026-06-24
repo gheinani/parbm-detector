@@ -78,7 +78,7 @@
     @media(max-width:700px){.chart-grid{grid-template-columns:1fr}}
     .chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
     .chart-card-header{padding:.7rem 1.2rem;background:var(--bg3);border-bottom:1px solid var(--border);font-size:.82rem;font-weight:600;color:var(--muted)}
-    .chart-card-body{padding:.5rem}
+    .chart-card-body{padding:.5rem;background:#ffffff;border-radius:0 0 var(--radius) var(--radius)}
     .chart-full{grid-column:1/-1}
 
     .domain-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.2rem}
@@ -298,13 +298,13 @@ const CHARGE={K:1,R:1,H:0.1,D:-1,E:-1};
 const DISORDER_AA={A:0.35,R:0.70,N:0.55,D:0.65,C:0.20,Q:0.60,E:0.75,G:0.45,H:0.40,I:0.15,L:0.15,K:0.75,M:0.25,F:0.15,P:0.65,S:0.60,T:0.50,W:0.15,Y:0.25,V:0.15};
 const DOMAIN_COLORS=['#e63946','#f4a261','#2a9d8f','#4a9eff','#9b5de5','#20b2aa','#ff8c00'];
 
-const PL={paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
-  font:{family:'Inter,sans-serif',color:'#8892a4',size:11},
+const PL={paper_bgcolor:'#ffffff',plot_bgcolor:'#ffffff',
+  font:{family:'Inter,sans-serif',color:'#374151',size:11},
   margin:{t:10,b:40,l:55,r:15},
-  xaxis:{gridcolor:'rgba(255,255,255,0.06)',zerolinecolor:'rgba(255,255,255,0.08)'},
-  yaxis:{gridcolor:'rgba(255,255,255,0.06)',zerolinecolor:'rgba(255,255,255,0.08)'},
+  xaxis:{gridcolor:'#e5e7eb',zerolinecolor:'#d1d5db',color:'#374151'},
+  yaxis:{gridcolor:'#e5e7eb',zerolinecolor:'#d1d5db',color:'#374151'},
 };
-const bl=(e={})=>({...PL,...e,legend:{font:{color:'#8892a4',size:10}}});
+const bl=(e={})=>({...PL,...e,legend:{font:{color:'#374151',size:10}}});
 
 // ── State ──────────────────────────────────────────────────────
 let currentResult=null, sortKey='score', sortDir=-1, showAll=false;
@@ -484,21 +484,38 @@ function renderCharts(res){
   const disorder=disorderProfile(seq);
 
   // ── A: Domain Architecture ────────────────────────────────
-  const shapes=[{type:'line',x0:1,x1:n,y0:0.5,y1:0.5,line:{color:'#4a5568',width:4}}];
+  const shapes=[{type:'line',x0:1,x1:n,y0:0.5,y1:0.5,line:{color:'#94a3b8',width:4}}];
   const annotations=[];
+  // Stagger annotation rows to avoid overlap: track occupied x-ranges per row
+  const rows=[{y:1.05,ay:-28},{y:1.22,ay:-28},{y:1.39,ay:-28}];
+  const rowOccupied=rows.map(()=>[]);
+  const labelWidth=n*0.18; // approximate label pixel span as fraction of sequence
   domains.forEach((d,i)=>{
     if(!d.start)return;
-    shapes.push({type:'rect',x0:d.start,x1:d.end,y0:0.3,y1:0.7,fillcolor:DOMAIN_COLORS[i%DOMAIN_COLORS.length],line:{width:0},opacity:0.9});
+    shapes.push({type:'rect',x0:d.start,x1:d.end,y0:0.3,y1:0.7,
+      fillcolor:DOMAIN_COLORS[i%DOMAIN_COLORS.length],line:{width:0},opacity:0.85});
     const mid=(d.start+d.end)/2;
-    const label=d.name.length>18?d.name.slice(0,16)+'…':d.name;
-    annotations.push({x:mid,y:0.85,text:`<b>${label}</b>`,showarrow:true,arrowhead:2,arrowsize:0.8,arrowcolor:'#8892a4',ay:-25,font:{size:9.5,color:'#e8eaf0'}});
+    const label=d.name.length>22?d.name.slice(0,20)+'…':d.name;
+    // Pick the first row that doesn't overlap this label's x-range
+    let rowIdx=0;
+    for(let r=0;r<rows.length;r++){
+      const clash=rowOccupied[r].some(([lo,hi])=>mid+labelWidth/2>lo&&mid-labelWidth/2<hi);
+      if(!clash){rowIdx=r;break;}
+      if(r===rows.length-1)rowIdx=i%rows.length; // fallback
+    }
+    rowOccupied[rowIdx].push([mid-labelWidth/2, mid+labelWidth/2]);
+    annotations.push({x:mid,y:rows[rowIdx].y,text:`<b>${label}</b>`,
+      showarrow:true,arrowhead:2,arrowsize:0.7,arrowcolor:'#64748b',
+      ax:0,ay:rows[rowIdx].ay,
+      font:{size:9.5,color:'#1e293b'},
+      bgcolor:'rgba(255,255,255,0.85)',borderpad:2});
   });
   Plotly.newPlot('chart-arch',[
     {x:hcSites.map(s=>s.position),y:hcSites.map(()=>0.5),mode:'markers',name:'HC site',
      marker:{color:'#e63946',size:9,symbol:'line-ns-open',line:{color:'#e63946',width:2.5}}},
-  ],{...bl({height:200}),shapes,annotations,
+  ],{...bl({height:240}),shapes,annotations,
     xaxis:{...PL.xaxis,title:'Residue position',range:[0,n+1]},
-    yaxis:{...PL.yaxis,range:[0,1.15],showticklabels:false,showgrid:false,zeroline:false},
+    yaxis:{...PL.yaxis,range:[0,1.5],showticklabels:false,showgrid:false,zeroline:false},
   },{responsive:true,displayModeBar:false});
 
   // ── B: Confidence landscape ────────────────────────────────
