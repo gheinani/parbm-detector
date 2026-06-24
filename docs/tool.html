@@ -120,7 +120,7 @@
 
 <nav>
   <a class="nav-brand" href="index.html">
-    <span style="font-size:1.2rem;">⬡</span> ParylationPredictor
+    ParylationPredictor
   </a>
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
@@ -137,7 +137,7 @@
 </nav>
 
 <div class="hero">
-  <div class="hero-badge">🧬 Interactive · No installation required</div>
+  <div class="hero-badge">Interactive · No installation required</div>
   <h1>Try <span>ParylationPredictor</span><br/>in your browser</h1>
   <p>Enter a UniProt accession — fetches the protein, predicts PARylation sites, shows all 8 analysis panels, and packages everything as a downloadable ZIP.</p>
 </div>
@@ -168,17 +168,17 @@
   <div class="progress-card">
     <div class="progress-title">Analyzing protein…</div>
     <div class="progress-steps">
-      <div class="p-step" id="ps-uniprot"><span class="p-icon">○</span>Fetching sequence from UniProt</div>
-      <div class="p-step" id="ps-interpro"><span class="p-icon">○</span>Detecting PAR-binding domains (InterPro)</div>
-      <div class="p-step" id="ps-predict"><span class="p-icon">○</span>Running PARylation site prediction</div>
-      <div class="p-step" id="ps-render"><span class="p-icon">○</span>Rendering 8 analysis panels</div>
+      <div class="p-step" id="ps-uniprot"><span class="p-icon">—</span>Fetching sequence from UniProt</div>
+      <div class="p-step" id="ps-interpro"><span class="p-icon">—</span>Detecting PAR-binding domains (InterPro)</div>
+      <div class="p-step" id="ps-predict"><span class="p-icon">—</span>Running PARylation site prediction</div>
+      <div class="p-step" id="ps-render"><span class="p-icon">—</span>Rendering 8 analysis panels</div>
     </div>
   </div>
 </div>
 
 <div id="error-section">
   <div class="error-card">
-    <span style="font-size:1.2rem;">⚠</span>
+    <span style="font-size:.85rem;font-weight:700;color:#f87171;">Error</span>
     <p id="error-msg">An error occurred.</p>
   </div>
 </div>
@@ -263,10 +263,10 @@
 
   <div class="download-bar">
     <span id="dl-label">Results ready</span>
-    <button class="btn-dl" onclick="downloadTSV()">⬇ TSV</button>
-    <button class="btn-dl" onclick="downloadJSON()">⬇ JSON</button>
+    <button class="btn-dl" onclick="downloadTSV()">Download TSV</button>
+    <button class="btn-dl" onclick="downloadJSON()">Download JSON</button>
     <button class="btn-dl btn-dl-primary" id="zip-btn" onclick="downloadZIP()">
-      ⬇ Download ZIP — all results + HTML report
+      Download ZIP — all results + HTML report
     </button>
   </div>
 </div>
@@ -331,7 +331,7 @@ function aaComposition(seq){
 function setStep(id,state){
   const el=document.getElementById(id);
   el.className='p-step '+(state==='error-s'?'error-s':state);
-  const icons={done:'✓',active:'',pending:'○',error:'✗'};
+  const icons={done:'done',active:'',pending:'—',error:'error'};
   const ico=state==='active'?'<span class="spinner"></span>':`<span class="p-icon">${icons[state]||'○'}</span>`;
   el.innerHTML=ico+el.textContent.trim();
 }
@@ -758,7 +758,7 @@ function downloadJSON(){
 async function downloadZIP(){
   const{prot}=currentResult;
   const btn=document.getElementById('zip-btn');
-  btn.textContent='⏳ Packaging…'; btn.disabled=true;
+  btn.textContent='Packaging…'; btn.disabled=true;
 
   const zip=new JSZip();
   const folder=zip.folder(`${prot.uid}_${prot.gene}`);
@@ -796,7 +796,7 @@ async function downloadZIP(){
     download:`${prot.uid}_${prot.gene}_ParylationPredictor.zip`,
   }).click();
 
-  btn.textContent='⬇ Download ZIP — all results + HTML report';
+  btn.textContent='Download ZIP — all results + HTML report';
   btn.disabled=false;
 }
 </script>
