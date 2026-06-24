@@ -1,5 +1,10 @@
 # ParylationPredictor
 
+[![PyPI version](https://img.shields.io/pypi/v/parylation-predictor?color=e63946&label=PyPI)](https://pypi.org/project/parylation-predictor/)
+[![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Online Tool](https://img.shields.io/badge/Online%20Tool-Try%20Now-orange)](https://gheinani.github.io/parbm-detector/tool.html)
+
 **ParylationPredictor** predicts PARylation (poly-ADP-ribosylation) sites in proteins and detects PAR-binding domains. You give it a UniProt ID — it gives you publication-quality figures, a formatted Excel file, an interactive HTML report, and structured data exports, all in one command.
 
 > Developed by the [Hashemi Gheinani Lab](https://www.dbmr.unibe.ch/research/research_programs/hashemi_gheinani_lab/index_eng.html), Department of BioMedical Research, University of Bern.
