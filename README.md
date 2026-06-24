@@ -1,156 +1,151 @@
 # ParylationPredictor
 
-**ParylationPredictor** is a Python package for predicting PARylation (poly-ADP-ribosylation) sites in proteins and detecting PAR-binding domains. It accepts UniProt IDs, raw amino-acid sequences, or FASTA files as input and produces publication-quality figures, formatted data exports, and an interactive HTML report — all in a single command.
+**ParylationPredictor** predicts PARylation (poly-ADP-ribosylation) sites in proteins and detects PAR-binding domains. You give it a UniProt ID — it gives you publication-quality figures, a formatted Excel file, an interactive HTML report, and structured data exports, all in one command.
 
 > Developed by the [Hashemi Gheinani Lab](https://www.dbmr.unibe.ch/research/research_programs/hashemi_gheinani_lab/index_eng.html), Department of BioMedical Research, University of Bern.
 
 ---
 
-## What does it do?
+## The quickest way to try it — no installation needed
 
-| Capability | Details |
-|---|---|
-| **PAR-binding domain detection** | Queries the InterPro API for 11 domain families: WWE, Macro domain, MacroD-type, BRCT, PBZ zinc finger, RRM, CCCH zinc finger, PARP catalytic & regulatory |
-| **PARylation site prediction** | Scores every residue using SxxE, SxxD, TxxE, ExxE, and acidic-cluster motifs with position-weighted confidence |
-| **Disorder prediction** | Per-residue IUPred2A scores to identify modification-accessible flexible regions |
-| **Cross-database enrichment** | Known PTMs from PHOSPHO.ELM · pathways from Reactome & KEGG · literature from EuropePMC |
-| **Publication figures** | 8-panel composite PNG/PDF/SVG + 8 individual panel files |
-| **Interactive HTML report** | 9-tab Plotly + Bootstrap 5 self-contained report |
-| **Structured data export** | Formatted Excel workbook (4 sheets) · JSON · TSV |
+Go to **[gheinani.github.io/parbm-detector/tool.html](https://gheinani.github.io/parbm-detector/tool.html)**, type your UniProt ID (for example `Q9NTX7`), and click **Analyze**. All 8 analysis panels appear in the browser and you can download a ZIP with the full results. No Python, no installation, no command line.
+
+**Use the Python package when you need:**
+- Batch analysis of many proteins at once
+- Full Excel workbook output with formatted sheets
+- The complete 8-panel composite figure as PNG/PDF/SVG for a paper
 
 ---
 
-## Requirements
+## Installing and running the Python package
 
-- **Python** ≥ 3.8
-- **pip** ≥ 21
+### What you need before starting
 
-Python dependencies (installed automatically):
+- A Mac or Windows PC
+- Python 3.8 or newer already installed (see below if you are not sure)
+- An internet connection
 
-| Package | Version | Purpose |
-|---|---|---|
-| `requests` | ≥ 2.28 | UniProt, InterPro, IUPred2A, PHOSPHO.ELM, EuropePMC, Reactome, KEGG API calls |
-| `matplotlib` | ≥ 3.5 | 8-panel publication figures |
-| `numpy` | ≥ 1.21 | Sliding-window profiles and scoring |
-| `openpyxl` | ≥ 3.0 | Formatted Excel workbook export |
-| `plotly` | ≥ 5.0 | Interactive HTML report |
-
-An active internet connection is required for UniProt, InterPro, and enrichment API calls.
+You do **not** need to know how to program. You only need to type a few commands exactly as written.
 
 ---
 
-## Installation
+### Step 0 — Check that Python is installed
 
-### 1 — Clone the repository
+**On Mac:** open the **Terminal** application.
+- Press `Command + Space`, type `Terminal`, press Enter.
 
-```bash
-git clone https://github.com/gheinani/parbm-detector.git
-cd parbm-detector
+**On Windows:** open **Command Prompt**.
+- Press the Windows key, type `cmd`, press Enter.
+
+In the window that opens, type the following and press Enter:
+
+```
+python --version
 ```
 
-### 2 — Install in editable mode
-
-```bash
-pip install -e .
-```
-
-This installs the package and all dependencies automatically.
-
-### 3 — Verify
-
-```python
-import parbm_detector_pkg as pp
-print(pp.__version__)   # → 3.1.0
-```
+You should see something like `Python 3.11.2`. If you see a version number starting with 3, you are ready. If you see an error or a version starting with 2, visit [python.org/downloads](https://www.python.org/downloads/) and install the latest version before continuing.
 
 ---
 
-## Quick start
+### Step 1 — Download the package
 
-### Analyze a protein by UniProt ID
+You do not need Git. Just download the package as a ZIP file directly from GitHub:
 
-```python
-from parbm_detector_pkg import PARBMDetector
-
-detector = PARBMDetector()
-
-# Analyze RNF146 — a PAR-binding E3 ubiquitin ligase
-result = detector.analyze("Q9NTX7")
-
-# Print formatted text report
-detector.print_analysis(result)
-```
-
-**Example output:**
-```
-────────────────────────────────────────────────────────
-           ParylationPredictor — ANALYSIS REPORT
-────────────────────────────────────────────────────────
-Protein                          E3 ubiquitin-protein ligase RNF146
-Gene                             RNF146
-UniProt ID                       Q9NTX7
-Organism                         Homo sapiens (Human)
-Amino acids                      359
-
-PAR-binding domains              WWE domain, WWE domain subgroup
-High-conf sites (≥0.70)          37 sites
-Top site                         E286 via SxxE motif, score 0.95
-────────────────────────────────────────────────────────
-```
+1. Go to [github.com/gheinani/parbm-detector](https://github.com/gheinani/parbm-detector)
+2. Click the green **Code** button near the top right
+3. Click **Download ZIP**
+4. Once downloaded, find the ZIP file (usually in your Downloads folder) and **double-click it** to unzip it
+5. You will now have a folder called `parbm-detector-main`
 
 ---
 
-### Full pipeline — enrich + export everything
+### Step 2 — Open a Terminal in the right folder
+
+You need to tell the Terminal to look inside the folder you just unzipped.
+
+**On Mac:**
+1. Open **Terminal** (press `Command + Space`, type Terminal, press Enter)
+2. Type `cd ` (that is: cd followed by a space — do not press Enter yet)
+3. Open Finder, find the `parbm-detector-main` folder, and **drag the folder** onto the Terminal window — the path will be filled in automatically
+4. Press Enter
+
+**On Windows:**
+1. Open the `parbm-detector-main` folder in File Explorer
+2. Click in the address bar at the top of the window (it shows the folder path)
+3. Type `cmd` and press Enter — a Command Prompt will open already pointing to that folder
+
+You can confirm you are in the right place by typing `dir` (Windows) or `ls` (Mac) and pressing Enter. You should see files like `pyproject.toml` and `README.md` listed.
+
+---
+
+### Step 3 — Install the package
+
+In the Terminal / Command Prompt window, type the following and press Enter:
+
+```
+pip install .
+```
+
+Wait for it to finish — it will download and install everything automatically (requests, matplotlib, numpy, openpyxl, plotly). This takes about 1–2 minutes depending on your internet connection. When you see the prompt reappear with no error message, the installation is complete.
+
+> **If you see "pip: command not found"**, try `pip3 install .` instead.
+
+---
+
+### Step 4 — Run your first analysis
+
+You will write a short script — a plain text file with the instructions for the tool. Do not worry, you only need to change one line.
+
+1. Open **Notepad** (Windows) or **TextEdit** (Mac) — any plain text editor
+   - On Mac: if TextEdit opens in rich-text mode, go to Format > Make Plain Text
+2. Copy and paste the following text exactly:
 
 ```python
 from parbm_detector_pkg import PARBMDetector
 
 detector = PARBMDetector()
-
-# Step 1: Analyze
-result = detector.analyze("Q9NTX7")
-
-# Step 2: Enrich with disorder, known PTMs, pathways, literature
+result = detector.analyze("Q9NTX7")        # <-- replace Q9NTX7 with your UniProt ID
 result = detector.enrich_result(result)
-
-# Step 3: Export all outputs to a named folder
 folder = detector.export_to_folder(result, base_dir=".")
-# → Creates ./Q9NTX7_RNF146/ with all files listed below
+print("Done! Your results are in:", folder)
 ```
+
+3. Replace `Q9NTX7` with your UniProt accession ID (for example `P18887`)
+4. Save the file as `run_analysis.py`
+   - On Windows: in the Save dialog, change "Save as type" to "All Files" and type the filename as `run_analysis.py`
+   - On Mac: save as `run_analysis.py` and make sure TextEdit does not add `.txt`
+5. Save the file inside the `parbm-detector-main` folder
+
+Now go back to the Terminal / Command Prompt and type:
+
+```
+python run_analysis.py
+```
+
+Press Enter. The tool will connect to UniProt, fetch your protein, run the analysis, and print a progress log. When it finishes, it prints:
+
+```
+Done! Your results are in: ./Q9NTX7_RNF146
+```
+
+> **If you see "python: command not found"**, try `python3 run_analysis.py` instead.
 
 ---
 
-### Other input types
+### Step 5 — Find your results
 
-```python
-# Raw amino-acid sequence
-result = detector.analyze("MSEQAAKG...LNRK")
-
-# FASTA string
-result = detector.analyze(">MyProtein\nMSEQAAKG...LNRK")
-
-# FASTA file — returns list of results
-results = detector.analyze_fasta_file("proteins.fasta")
-for r in results:
-    detector.export_to_folder(r, base_dir="output/")
-```
-
----
-
-## Output files
-
-All files are written to a folder named `{UniProtID}_{gene}/`:
+Open the `parbm-detector-main` folder in Finder (Mac) or File Explorer (Windows). You will see a new folder named after your protein, for example `Q9NTX7_RNF146`. Open it — it contains:
 
 ```
 Q9NTX7_RNF146/
-├── Q9NTX7_RNF146_analysis.png      ← 8-panel composite figure (200 dpi)
-├── Q9NTX7_RNF146_analysis.pdf      ← Vector PDF for journal submission
-├── Q9NTX7_RNF146_analysis.svg      ← Scalable SVG
-├── Q9NTX7_RNF146_report.xlsx       ← Formatted Excel (4 sheets)
-├── Q9NTX7_RNF146_report.html       ← Interactive 9-tab HTML report
-├── Q9NTX7_RNF146_data.json         ← Structured JSON (schema v3.0)
-├── Q9NTX7_RNF146_sites.tsv         ← Site table with disorder & PTM columns
-└── panels/                         ← 8 panels × PNG + PDF + SVG = 24 files
+├── Q9NTX7_RNF146_analysis.png      <- 8-panel figure (open with any image viewer)
+├── Q9NTX7_RNF146_analysis.pdf      <- same figure as PDF, ready for a journal
+├── Q9NTX7_RNF146_analysis.svg      <- scalable vector version
+├── Q9NTX7_RNF146_report.xlsx       <- Excel workbook with 4 data sheets
+├── Q9NTX7_RNF146_report.html       <- interactive report (open in any browser)
+├── Q9NTX7_RNF146_data.json         <- raw data in JSON format
+├── Q9NTX7_RNF146_sites.tsv         <- table of predicted sites (open in Excel)
+└── panels/                          <- each of the 8 panels as separate files
     ├── *_A_domain_architecture.png
     ├── *_B_confidence_landscape.png
     ├── *_C_hydrophobicity.png
@@ -161,64 +156,101 @@ Q9NTX7_RNF146/
     └── *_H_residue_type_breakdown.png
 ```
 
----
-
-## Figure panels
-
-| Panel | Content |
-|---|---|
-| **A** | Domain architecture — backbone with PAR-binding domain blocks and PARylation site ticks |
-| **B** | Confidence landscape — sliding-window PARylation score with threshold bands |
-| **C** | Hydrophobicity profile — Kyte–Doolittle, sliding window |
-| **D** | Charge profile — local net charge, highlighting acidic clusters |
-| **E** | Motif breakdown — site counts per motif type (SxxE, SxxD, TxxE, ExxE, acidic) |
-| **F** | Residue composition — amino-acid pie chart + summary table |
-| **G** | Intrinsic disorder — IUPred2A per-residue scores |
-| **H** | Residue-type breakdown — all vs. high-confidence sites by amino acid (S/T/E/D/Y/K/R) |
+Double-click `Q9NTX7_RNF146_report.html` to open the interactive report in your browser. Double-click the `.xlsx` file to open it in Excel. The `.png` and `.pdf` files open in any image or PDF viewer.
 
 ---
 
-## API reference
+### Analyzing multiple proteins
+
+To analyze several proteins at once, replace the analysis lines in `run_analysis.py` with a list:
 
 ```python
+from parbm_detector_pkg import PARBMDetector
+
 detector = PARBMDetector()
 
-detector.analyze(input_data)                      # → result dict
-detector.enrich_result(result, skip=[])           # → enriched result dict
-detector.print_analysis(result)                   # formatted text to stdout
-detector.visualize_protein(result, output_file)   # → PNG + PDF + SVG
-detector.export_to_folder(result, base_dir=".")   # → folder path (all files)
-detector.export_excel(result, output_file)        # → .xlsx path
-detector.export_html(result, output_file)         # → .html path
-detector.export_json_structured(result, file)     # → .json path
-detector.export_tsv(result, output_file)          # → .tsv path
+proteins = ["Q9NTX7", "P18887", "Q9Y6K9"]   # add as many UniProt IDs as you like
+
+for uid in proteins:
+    result = detector.analyze(uid)
+    result = detector.enrich_result(result)
+    detector.export_to_folder(result, base_dir=".")
+    print("Finished:", uid)
 ```
 
-**`enrich_result` skip options:**
-
-```python
-# Skip specific modules (useful for offline use or speed)
-result = detector.enrich_result(result, skip=["kegg", "literature"])
-# Available: "disorder", "ptm", "pathways", "literature"
-```
+Each protein gets its own output folder.
 
 ---
 
-## Running the tests
+## What does the tool analyse?
 
-```bash
-pytest tests/ -v
-```
+| Capability | Details |
+|---|---|
+| PAR-binding domain detection | Queries InterPro for 11 domain families: WWE, Macro, MacroD-type, BRCT, PBZ, RRM, CCCH, PARP catalytic and regulatory |
+| PARylation site prediction | Scores every residue for SxxE, SxxD, TxxE, ExxE, and acidic-cluster motifs |
+| Disorder prediction | Per-residue IUPred2A scores to find modification-accessible flexible regions |
+| Cross-database enrichment | Known PTMs from PHOSPHO.ELM, pathways from Reactome and KEGG, literature from EuropePMC |
+| Publication figures | 8-panel composite PNG/PDF/SVG plus 8 individual panel files |
+| Interactive report | Self-contained HTML report viewable in any browser |
+| Structured exports | Formatted Excel (4 sheets), JSON, and TSV |
+
+---
+
+## Figure panels explained
+
+| Panel | What it shows | How to interpret it |
+|---|---|---|
+| A | Domain architecture | Protein backbone with PAR-binding domain blocks. Sites inside domain boxes are highest-priority candidates |
+| B | Confidence landscape | Sliding-window score across the sequence. Broad peaks indicate modification hotspots |
+| C | Hydrophobicity | Kyte-Doolittle profile. Sites in hydrophilic dips are most solvent-accessible |
+| D | Charge profile | Local net charge. Deep acidic (negative) regions are primary modification zones |
+| E | Motif breakdown | Counts per motif type (SxxE, SxxD, TxxE, ExxE, acidic cluster) |
+| F | Residue composition | Amino-acid pie chart with key metrics summary |
+| G | Disorder profile | IUPred2A scores. Sites in disordered regions (score > 0.5) are most accessible |
+| H | Residue-type breakdown | All predicted vs. high-confidence sites by amino acid (S, T, E, D, Y, K, R) |
+
+---
+
+## Troubleshooting
+
+**"pip is not recognized" or "python is not recognized"**
+Python may not be added to your system PATH. On Windows, reinstall Python from [python.org](https://www.python.org/downloads/) and make sure to tick the box **"Add Python to PATH"** during installation.
+
+**"No module named parbm_detector_pkg"**
+You are running `python` from the wrong folder. Make sure your Terminal is inside the `parbm-detector-main` folder (Step 2) before running the install and analysis commands.
+
+**The script runs but I get a network error**
+The tool needs internet access to contact UniProt, InterPro, and other databases. Check your connection and try again. Corporate or university firewalls occasionally block API calls — try from a different network if the problem persists.
+
+**The analysis takes a long time**
+Each protein analysis makes several API requests. 30–60 seconds per protein is normal. Enrichment (`enrich_result`) adds another 30–60 seconds because it queries EuropePMC, Reactome, and KEGG.
+
+---
+
+## Requirements
+
+- Python 3.8 or newer
+- pip (comes with Python)
+
+Python packages installed automatically by `pip install .`:
+
+| Package | Purpose |
+|---|---|
+| requests | API calls to UniProt, InterPro, IUPred2A, PHOSPHO.ELM, EuropePMC, Reactome, KEGG |
+| matplotlib | 8-panel publication figures |
+| numpy | Sliding-window scoring |
+| openpyxl | Formatted Excel workbook |
+| plotly | Interactive HTML report |
 
 ---
 
 ## Contact
 
-**Dr. Ali Hashemi Gheinani**  
-Group Leader  
-Department of BioMedical Research, University of Bern  
-✉️ [ali.hashemi@unibe.ch](mailto:ali.hashemi@unibe.ch)  
-🔬 [Hashemi Gheinani Lab](https://www.dbmr.unibe.ch/research/research_programs/hashemi_gheinani_lab/index_eng.html)
+**Dr. Ali Hashemi Gheinani**
+Group Leader
+Department of BioMedical Research, University of Bern
+Email: [ali.hashemi@unibe.ch](mailto:ali.hashemi@unibe.ch)
+Lab: [Hashemi Gheinani Lab](https://www.dbmr.unibe.ch/research/research_programs/hashemi_gheinani_lab/index_eng.html)
 
 For bug reports and feature requests, please use the [GitHub Issues](https://github.com/gheinani/parbm-detector/issues) tracker.
 
