@@ -47,52 +47,23 @@ You should see something like `Python 3.11.2`. If you see a version number start
 
 ---
 
-### Step 1 — Download the package
-
-You do not need Git. Just download the package as a ZIP file directly from GitHub:
-
-1. Go to [github.com/gheinani/parbm-detector](https://github.com/gheinani/parbm-detector)
-2. Click the green **Code** button near the top right
-3. Click **Download ZIP**
-4. Once downloaded, find the ZIP file (usually in your Downloads folder) and **double-click it** to unzip it
-5. You will now have a folder called `parbm-detector-main`
-
----
-
-### Step 2 — Open a Terminal in the right folder
-
-You need to tell the Terminal to look inside the folder you just unzipped.
-
-**On Mac:**
-1. Open **Terminal** (press `Command + Space`, type Terminal, press Enter)
-2. Type `cd ` (that is: cd followed by a space — do not press Enter yet)
-3. Open Finder, find the `parbm-detector-main` folder, and **drag the folder** onto the Terminal window — the path will be filled in automatically
-4. Press Enter
-
-**On Windows:**
-1. Open the `parbm-detector-main` folder in File Explorer
-2. Click in the address bar at the top of the window (it shows the folder path)
-3. Type `cmd` and press Enter — a Command Prompt will open already pointing to that folder
-
-You can confirm you are in the right place by typing `dir` (Windows) or `ls` (Mac) and pressing Enter. You should see files like `pyproject.toml` and `README.md` listed.
-
----
-
-### Step 3 — Install the package
+### Step 1 — Install the package
 
 In the Terminal / Command Prompt window, type the following and press Enter:
 
 ```
-pip install .
+pip install parylation-predictor
 ```
 
-Wait for it to finish — it will download and install everything automatically (requests, matplotlib, numpy, openpyxl, plotly). This takes about 1–2 minutes depending on your internet connection. When you see the prompt reappear with no error message, the installation is complete.
+This downloads and installs the package and all its dependencies automatically (requests, matplotlib, numpy, openpyxl, plotly). It takes about 1–2 minutes. When the prompt reappears with no error message, installation is complete.
 
-> **If you see "pip: command not found"**, try `pip3 install .` instead.
+> **If you see "pip: command not found"**, try `pip3 install parylation-predictor` instead.
+
+You do not need to download anything from GitHub manually. The package is published on PyPI at [pypi.org/project/parylation-predictor](https://pypi.org/project/parylation-predictor/).
 
 ---
 
-### Step 4 — Run your first analysis
+### Step 2 — Run your first analysis
 
 You will write a short script — a plain text file with the instructions for the tool. Do not worry, you only need to change one line.
 
@@ -111,10 +82,9 @@ print("Done! Your results are in:", folder)
 ```
 
 3. Replace `Q9NTX7` with your UniProt accession ID (for example `P18887`)
-4. Save the file as `run_analysis.py`
+4. Save the file as `run_analysis.py` on your Desktop or anywhere you like
    - On Windows: in the Save dialog, change "Save as type" to "All Files" and type the filename as `run_analysis.py`
    - On Mac: save as `run_analysis.py` and make sure TextEdit does not add `.txt`
-5. Save the file inside the `parbm-detector-main` folder
 
 Now go back to the Terminal / Command Prompt and type:
 
@@ -132,9 +102,9 @@ Done! Your results are in: ./Q9NTX7_RNF146
 
 ---
 
-### Step 5 — Find your results
+### Step 3 — Find your results
 
-Open the `parbm-detector-main` folder in Finder (Mac) or File Explorer (Windows). You will see a new folder named after your protein, for example `Q9NTX7_RNF146`. Open it — it contains:
+Open the folder where you saved `run_analysis.py` in Finder (Mac) or File Explorer (Windows). You will see a new folder named after your protein, for example `Q9NTX7_RNF146`. Open it — it contains:
 
 ```
 Q9NTX7_RNF146/
