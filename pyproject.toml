@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "parbm-detector"
+version = "3.0.0"
+description = "PAR-binding Motif Detection Tool – identify PAR-binding domains and predict PARylation sites"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "PARBM Detector Team"},
+]
+keywords = ["PAR-binding", "PARylation", "protein", "bioinformatics", "proteomics", "ADP-ribosylation"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "requests>=2.28.0",
+    "matplotlib>=3.5.0",
+    "numpy>=1.21.0",
+    "openpyxl>=3.0.0",
+    "plotly>=5.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "black>=22.0", "flake8>=4.0"]
+
+[project.scripts]
+parbm-detect = "parbm_detector_pkg.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]

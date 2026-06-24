@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PARBM Detector — PARylation Site Prediction Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #0b0f1a;
+      --bg2:       #111827;
+      --bg3:       #1a2234;
+      --border:    rgba(255,255,255,0.08);
+      --accent:    #e63946;
+      --accent2:   #f4a261;
+      --blue:      #4a9eff;
+      --teal:      #2a9d8f;
+      --purple:    #9b5de5;
+      --text:      #e8eaf0;
+      --muted:     #8892a4;
+      --code-bg:   #0d1117;
+      --radius:    12px;
+      --glow:      0 0 40px rgba(230,57,70,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      height: 64px;
+      background: rgba(11,15,26,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-weight: 700; font-size: 1.05rem; color: var(--text);
+      text-decoration: none;
+    }
+    .nav-brand .dot { color: var(--accent); }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      font-weight: 500; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.45rem 1.1rem;
+      background: var(--accent); color: #fff;
+      border-radius: 8px; text-decoration: none;
+      font-size: 0.875rem; font-weight: 600;
+      transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 10%, rgba(230,57,70,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 60%, rgba(74,158,255,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 20% 80%, rgba(155,93,229,0.07) 0%, transparent 60%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.35rem 1rem;
+      background: rgba(230,57,70,0.12);
+      border: 1px solid rgba(230,57,70,0.3);
+      border-radius: 99px;
+      font-size: 0.8rem; font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+      max-width: 800px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero .sub {
+      font-size: 1.15rem; color: var(--muted);
+      max-width: 600px; margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+    .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.6rem;
+      border-radius: 10px; text-decoration: none;
+      font-weight: 600; font-size: 0.95rem;
+      transition: all .2s;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 4px 20px rgba(230,57,70,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(230,57,70,0.45); }
+    .btn-outline {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { background: var(--bg3); border-color: rgba(255,255,255,0.2); }
+
+    .hero-install {
+      margin-top: 2.5rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--teal);
+    }
+    .hero-install .prompt { color: var(--muted); }
+
+    /* ── SECTION SHELLS ── */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700; letter-spacing: -0.02em;
+      margin-bottom: 0.8rem;
+    }
+    .section-sub {
+      color: var(--muted); font-size: 1.05rem;
+      max-width: 640px; margin-bottom: 3rem;
+    }
+
+    /* ── FEATURES ── */
+    #features { background: var(--bg2); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+    }
+    .feature-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: rgba(230,57,70,0.4); transform: translateY(-3px); }
+    .feature-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .feature-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+
+    /* ── GALLERY ── */
+    #gallery { background: var(--bg); }
+    .gallery-tabs {
+      display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .tab-btn {
+      padding: 0.45rem 1.1rem;
+      border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg3); color: var(--muted);
+      font-size: 0.85rem; font-weight: 500;
+      cursor: pointer; transition: all .2s;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+    }
+    .gallery-viewer {
+      position: relative;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .gallery-panel { display: none; }
+    .gallery-panel.active { display: block; }
+    .gallery-panel img {
+      width: 100%; height: auto; display: block;
+      object-fit: contain;
+    }
+    .panel-caption {
+      padding: 1rem 1.5rem;
+      background: var(--bg3);
+      border-top: 1px solid var(--border);
+    }
+    .panel-caption h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .panel-caption p { color: var(--muted); font-size: 0.85rem; }
+    .panel-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem; font-weight: 700;
+      margin-right: 0.5rem; margin-bottom: 0.5rem;
+    }
+
+    /* ── INSTALL ── */
+    #install { background: var(--bg2); }
+    .steps { display: flex; flex-direction: column; gap: 1.5rem; }
+    .step {
+      display: flex; gap: 1.2rem;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.4rem 1.6rem;
+    }
+    .step-num {
+      min-width: 36px; height: 36px;
+      border-radius: 50%; background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700; color: #fff;
+      margin-top: 0.1rem;
+    }
+    .step h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      overflow-x: auto;
+      margin-top: 0.5rem;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+    .kw { color: #ff79c6; }
+    .fn { color: #50fa7b; }
+    .str { color: #f1fa8c; }
+    .cm { color: #6272a4; }
+    .var { color: #8be9fd; }
+    .num { color: var(--accent2); }
+
+    /* ── USAGE ── */
+    #usage { background: var(--bg); }
+    .usage-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    }
+    @media (max-width: 768px) { .usage-grid { grid-template-columns: 1fr; } }
+    .usage-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .usage-card-header {
+      padding: 0.8rem 1.2rem;
+      background: var(--bg3); border-bottom: 1px solid var(--border);
+      font-size: 0.85rem; font-weight: 600; color: var(--muted);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .dot-r { width: 10px; height: 10px; border-radius: 50%; background: #ff5f57; }
+    .dot-y { width: 10px; height: 10px; border-radius: 50%; background: #febc2e; }
+    .dot-g { width: 10px; height: 10px; border-radius: 50%; background: #28c840; }
+    .usage-card pre { border: none; border-radius: 0; margin: 0; }
+
+    /* ── OUTPUT FILES ── */
+    .output-table {
+      width: 100%; border-collapse: collapse; margin-top: 1.5rem;
+    }
+    .output-table th {
+      text-align: left; padding: 0.75rem 1rem;
+      background: var(--bg3); color: var(--muted);
+      font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+    .output-table td {
+      padding: 0.7rem 1rem; font-size: 0.88rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .output-table tr:last-child td { border-bottom: none; }
+    .output-table tr:hover td { background: var(--bg3); }
+    .file-ext {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem; padding: 0.15rem 0.5rem;
+      border-radius: 5px; font-weight: 500;
+    }
+
+    /* ── API SECTION ── */
+    #api { background: var(--bg2); }
+    .api-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 768px) { .api-grid { grid-template-columns: 1fr; } }
+    .api-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.4rem;
+    }
+    .api-card h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .api-card .sig {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem; color: var(--blue);
+      margin-bottom: 0.6rem;
+    }
+    .api-card p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+    .api-card ul { color: var(--muted); font-size: 0.83rem; padding-left: 1.2rem; }
+    .api-card ul li { margin-bottom: 0.2rem; }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--bg); }
+    .contact-card {
+      max-width: 640px; margin: 0 auto;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .contact-header {
+      background: linear-gradient(135deg, var(--accent) 0%, #c1121f 100%);
+      padding: 2rem; text-align: center;
+    }
+    .contact-header h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .contact-header p { opacity: 0.85; font-size: 0.9rem; }
+    .contact-body { padding: 2rem; }
+    .contact-row {
+      display: flex; align-items: flex-start; gap: 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .contact-icon {
+      width: 38px; height: 38px; min-width: 38px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 9px; display: flex; align-items: center;
+      justify-content: center; font-size: 1rem;
+    }
+    .contact-row h5 { font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-bottom: 0.15rem; }
+    .contact-row a, .contact-row span {
+      font-size: 0.92rem; color: var(--text);
+      text-decoration: none; font-weight: 500;
+    }
+    .contact-row a:hover { color: var(--accent); }
+    .contact-divider {
+      border: none; border-top: 1px solid var(--border); margin: 1.2rem 0;
+    }
+    .lab-link {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 1rem 1.2rem;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 10px; text-decoration: none;
+      color: var(--text); transition: border-color .2s;
+      margin-top: 1rem;
+    }
+    .lab-link:hover { border-color: var(--accent); }
+    .lab-link-text { font-size: 0.88rem; }
+    .lab-link-text strong { display: block; font-weight: 600; }
+    .lab-link-text span { color: var(--muted); font-size: 0.8rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg2); border-top: 1px solid var(--border);
+      padding: 2rem; text-align: center;
+      color: var(--muted); font-size: 0.85rem;
+    }
+    footer a { color: var(--muted); }
+
+    /* ── UTILS ── */
+    .chip {
+      display: inline-block; padding: 0.2rem 0.7rem;
+      border-radius: 99px; font-size: 0.75rem; font-weight: 600;
+    }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────────────── NAV ─────────────────────── -->
+<nav>
+  <a class="nav-brand" href="#">
+    <span style="font-size:1.2rem;">⬡</span>
+    PARBM<span class="dot">·</span>Detector
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#api">API</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a class="nav-cta" href="https://github.com/gheinani/parbm-detector" target="_blank">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    GitHub
+  </a>
+</nav>
+
+<!-- ─────────────────────── HERO ─────────────────────── -->
+<section class="hero" id="home">
+  <div class="hero-badge">🧬 Bioinformatics · PARylation</div>
+  <h1>Predict <span>PARylation</span> sites with publication-quality output</h1>
+  <p class="sub">
+    PARBM Detector identifies PAR-binding domains and predicts ADP-ribosylation sites
+    from UniProt IDs, raw sequences, or FASTA files — in a single command.
+  </p>
+  <div class="hero-buttons">
+    <a class="btn btn-primary" href="#install">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="21" x2="12" y2="3"/></svg>
+      Get Started
+    </a>
+    <a class="btn btn-outline" href="#gallery">View Example Output</a>
+  </div>
+  <div class="hero-install">
+    <span class="prompt">$</span>
+    <span>pip install -e .</span>
+  </div>
+</section>
+
+<!-- ─────────────────────── FEATURES ─────────────────────── -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">What it does</div>
+    <h2 class="section-title">Everything in one tool</h2>
+    <p class="section-sub">From raw sequence to publication-ready figures and data — no intermediate steps required.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(230,57,70,0.15);">🔍</div>
+        <h3>PAR-binding Domain Detection</h3>
+        <p>Queries the InterPro API for 11 known PAR-binding domain families including WWE, Macro, BRCT, PBZ, RRM, and PARP catalytic domains.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(74,158,255,0.15);">🎯</div>
+        <h3>Motif-based PARylation Prediction</h3>
+        <p>Scores residues using SxxE, SxxD, TxxE, ExxE, and acidic-cluster motifs with position-weighted confidence scoring.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(42,157,143,0.15);">🌀</div>
+        <h3>Disorder Prediction</h3>
+        <p>Integrates IUPred2A for per-residue intrinsic disorder scores, highlighting sites in flexible regions most amenable to modification.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(155,93,229,0.15);">🗂️</div>
+        <h3>Cross-database Enrichment</h3>
+        <p>Fetches known PTMs from PHOSPHO.ELM, pathways from Reactome &amp; KEGG, and relevant literature from EuropePMC automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(244,162,97,0.15);">📊</div>
+        <h3>8-Panel Publication Figure</h3>
+        <p>Domain architecture, confidence landscape, hydrophobicity, charge, motif breakdown, residue composition, disorder profile, and residue-type breakdown.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(40,200,64,0.15);">📦</div>
+        <h3>Complete Output Package</h3>
+        <p>PNG + PDF + SVG figures, formatted Excel workbook, interactive HTML report, structured JSON, and TSV — all in a named protein folder.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── GALLERY ─────────────────────── -->
+<section id="gallery">
+  <div class="container">
+    <div class="section-label">Example output — RNF146 (Q9NTX7)</div>
+    <h2 class="section-title">Publication-ready panels</h2>
+    <p class="section-sub">Generated from a single command: <code style="background:var(--code-bg);padding:0.1rem 0.4rem;border-radius:5px;">detector.export_to_folder(result)</code></p>
+
+    <div class="gallery-tabs">
+      <button class="tab-btn active" onclick="showPanel('A',this)">A · Domain Architecture</button>
+      <button class="tab-btn" onclick="showPanel('B',this)">B · Confidence</button>
+      <button class="tab-btn" onclick="showPanel('C',this)">C · Hydrophobicity</button>
+      <button class="tab-btn" onclick="showPanel('D',this)">D · Charge</button>
+      <button class="tab-btn" onclick="showPanel('E',this)">E · Motifs</button>
+      <button class="tab-btn" onclick="showPanel('F',this)">F · Composition</button>
+      <button class="tab-btn" onclick="showPanel('G',this)">G · Disorder</button>
+      <button class="tab-btn" onclick="showPanel('H',this)">H · Residue Types</button>
+    </div>
+
+    <div class="gallery-viewer">
+      <div class="gallery-panel active" id="panel-A">
+        <img src="assets/panels/Q9NTX7_RNF146_analysis_A_domain_architecture.png" alt="Panel A – Domain Architecture" loading="lazy"/>
+        <div class="panel-caption">
+          <span class="panel-badge chip" style="background:rgba(230,57,70,0.15);color:var(--accent);">Panel A</span>
+          <h4>Domain Architecture</h4>
+          <p>Protein backbone with PAR-binding domains (WWE, Macro, BRCT…) drawn as annotated blocks. Greedy track assignment prevents label overlap. High-confidence PARylation sites are marked as vertical ticks.</p>
+        </div>
+      </div>
+      <div class="gallery-panel" id="panel-B">
+        <img src="assets/panels/Q9NTX7_RNF146_analysis_B_confidence_landscape.png" alt="Panel B – Confidence Landscape" loading="lazy"/>
+        <div class="panel-caption">
+          <span class="panel-badge chip" style="background:rgba(74,158,255,0.15);color:var(--blue);">Panel B</span>
+          <h4>Confidence Landscape</h4>
+          <p>Sliding-window PARylation confidence score across the entire sequence. Coloured threshold bands distinguish high (≥0.70), medium (≥0.50), and low confidence regions.</p>
+        </div>
+      </div>
+      <div class="gallery-panel" id="panel-C">
+        <img src="assets/panels/Q9NTX7_RNF146_analysis_C_hydrophobicity.png" alt="Panel C – Hydrophobicity" loading="lazy"/>
+        <div class="panel-caption">
+          <span class="panel-badge chip" style="background:rgba(42,157,143,0.15);color:var(--teal);">Panel C</span>
+          <h4>Hydrophobicity Profile</h4>
+          <p>Kyte–Doolittle hydrophobicity averaged over a sliding window. Hydrophobic peaks identify buried structural segments; hydrophilic troughs mark exposed, modification-accessible loops.</p>
+        </div>
+      </div>
+      <div class="gallery-panel" id="panel-D">
+        <img src="assets/panels/Q9NTX7_RNF146_analysis_D_charge_profile.png" alt="Panel D – Charge Profile" loading="lazy"/>
+        <div class="panel-caption">
+          <span class="panel-badge chip" style="background:rgba(155,93,229,0.15);color:var(--purple);">Panel D</span>
+          <h4>Local Charge Profile</h4>
+          <p>Net charge computed along the sequence. Acidic clusters (negative charge) are primary PARylation initiation zones. The panel highlights acidic patches that overlap with predicted sites.</p>
+        </div>
+      </div>
+      <div class="gallery-panel" id="panel-E">
+        <img src="assets/panels/Q9NTX7_RNF146_analysis_E_motif_breakdown.png" alt="Panel E – Motif Breakdown" loading="lazy"/>
+        <div class="panel-caption">
+          <span class="panel-badge chip" style="background:rgba(244,162,97,0.15);color:var(--accent2);">Panel E</span>
+          <h4>Motif Breakdown</h4>
+          <p>Count of predicted sites grouped by motif type (SxxE, SxxD, TxxE, ExxE, acidic cluster). Useful for understanding which chemical context drives PARylation in this protein.</p>
+        </div>
+      </div>
+      <div class="gallery-panel" id="panel-F">
+        <img src="assets/panels/Q9NTX7_RNF146_analysis_F_residue_composition.png" alt="Panel F – Composition" loading="lazy"/>
+        <div class="panel-caption">
+          <span class="panel-badge chip" style="background:rgba(40,200,64,0.15);color:#28c840;">Panel F</span>
+          <h4>Residue Composition &amp; Summary</h4>
+          <p>Amino-acid composition pie chart alongside a tabular summary of key metrics: total predicted sites, high-confidence count, top site, and domain summary.</p>
+        </div>
+      </div>
+      <div class="gallery-panel" id="panel-G">
+        <img src="assets/panels/Q9NTX7_RNF146_analysis_G_disorder_profile.png" alt="Panel G – Disorder" loading="lazy"/>
+        <div class="panel-caption">
+          <span class="panel-badge chip" style="background:rgba(155,93,229,0.2);color:var(--purple);">Panel G</span>
+          <h4>Intrinsic Disorder Profile</h4>
+          <p>Per-residue IUPred2A disorder score. Regions above 0.5 (purple fill) are intrinsically disordered — the preferred environment for post-translational modifications including PARylation.</p>
+        </div>
+      </div>
+      <div class="gallery-panel" id="panel-H">
+        <img src="assets/panels/Q9NTX7_RNF146_analysis_H_residue_type_breakdown.png" alt="Panel H – Residue Types" loading="lazy"/>
+        <div class="panel-caption">
+          <span class="panel-badge chip" style="background:rgba(230,57,70,0.15);color:var(--accent);">Panel H</span>
+          <h4>PARylation Sites by Residue Type</h4>
+          <p>Paired bar chart comparing all predicted sites vs. high-confidence sites (≥0.70) per amino acid type (S, T, E, D, Y, K, R). Highlights which residue class dominates in each protein.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── INSTALL ─────────────────────── -->
+<section id="install">
+  <div class="container">
+    <div class="section-label">Installation</div>
+    <h2 class="section-title">Up and running in 60 seconds</h2>
+    <p class="section-sub">Requires Python 3.8+ and a few standard scientific packages.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div style="flex:1">
+          <h4>Clone the repository</h4>
+          <pre><code><span class="cm"># Clone from GitHub</span>
+git clone https://github.com/gheinani/parbm-detector.git
+cd parbm-detector</code></pre>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div style="flex:1">
+          <h4>Install in editable mode</h4>
+          <pre><code><span class="cm"># Installs the package and all dependencies</span>
+pip install -e .
+
+<span class="cm"># Dependencies installed automatically:</span>
+<span class="cm">#   requests · matplotlib · numpy · openpyxl · plotly</span></code></pre>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div style="flex:1">
+          <h4>Verify the installation</h4>
+          <pre><code><span class="kw">import</span> parbm_detector_pkg <span class="kw">as</span> parbm
+<span class="fn">print</span>(parbm.__version__)   <span class="cm"># → 3.1.0</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── USAGE ─────────────────────── -->
+<section id="usage">
+  <div class="container">
+    <div class="section-label">How to use</div>
+    <h2 class="section-title">From UniProt ID to full report</h2>
+    <p class="section-sub">The example below reproduces the RNF146 output shown in the gallery above.</p>
+
+    <div class="usage-grid">
+      <div class="usage-card">
+        <div class="usage-card-header">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          &nbsp; Minimal — UniProt ID
+        </div>
+<pre><code><span class="kw">from</span> parbm_detector_pkg <span class="kw">import</span> PARBMDetector
+
+<span class="var">detector</span> = <span class="fn">PARBMDetector</span>()
+
+<span class="cm"># Analyze RNF146 (WWE domain, PAR-binding)</span>
+<span class="var">result</span> = detector.<span class="fn">analyze</span>(<span class="str">"Q9NTX7"</span>)
+detector.<span class="fn">print_analysis</span>(<span class="var">result</span>)
+</code></pre>
+      </div>
+
+      <div class="usage-card">
+        <div class="usage-card-header">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          &nbsp; Full — Enrich + Export
+        </div>
+<pre><code><span class="kw">from</span> parbm_detector_pkg <span class="kw">import</span> PARBMDetector
+
+<span class="var">detector</span> = <span class="fn">PARBMDetector</span>()
+
+<span class="cm"># Analyze</span>
+<span class="var">result</span> = detector.<span class="fn">analyze</span>(<span class="str">"Q9NTX7"</span>)
+
+<span class="cm"># Enrich with disorder, PTMs, pathways, literature</span>
+<span class="var">result</span> = detector.<span class="fn">enrich_result</span>(<span class="var">result</span>)
+
+<span class="cm"># Export everything to Q9NTX7_RNF146/ folder</span>
+detector.<span class="fn">export_to_folder</span>(<span class="var">result</span>, base_dir=<span class="str">"."</span>)
+</code></pre>
+      </div>
+
+      <div class="usage-card">
+        <div class="usage-card-header">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          &nbsp; Raw sequence input
+        </div>
+<pre><code><span class="cm"># Works with raw amino-acid sequences too</span>
+<span class="var">seq</span> = <span class="str">"MSEQ...LNRK"</span>
+<span class="var">result</span> = detector.<span class="fn">analyze</span>(<span class="var">seq</span>)
+</code></pre>
+      </div>
+
+      <div class="usage-card">
+        <div class="usage-card-header">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          &nbsp; FASTA file input
+        </div>
+<pre><code><span class="cm"># FASTA files — returns a list of results</span>
+<span class="var">results</span> = detector.<span class="fn">analyze_fasta_file</span>(
+    <span class="str">"proteins.fasta"</span>
+)
+<span class="kw">for</span> <span class="var">r</span> <span class="kw">in</span> <span class="var">results</span>:
+    detector.<span class="fn">export_to_folder</span>(<span class="var">r</span>, base_dir=<span class="str">"output"</span>)
+</code></pre>
+      </div>
+    </div>
+
+    <!-- Output files table -->
+    <h3 style="margin-top:3rem; font-size:1.1rem; font-weight:600;">Generated output files</h3>
+    <p style="color:var(--muted);font-size:0.9rem;margin-top:0.3rem;margin-bottom:1rem;">
+      All files are placed in a folder named <code style="background:var(--code-bg);padding:0.1rem 0.4rem;border-radius:5px;">{UniProtID}_{gene}/</code>
+    </p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+      <table class="output-table">
+        <thead>
+          <tr><th>File</th><th>Format</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>*_analysis.png</code></td>
+            <td><span class="file-ext chip" style="background:rgba(74,158,255,0.15);color:var(--blue);">PNG</span></td>
+            <td>8-panel composite figure (200 dpi)</td>
+          </tr>
+          <tr>
+            <td><code>*_analysis.pdf</code></td>
+            <td><span class="file-ext chip" style="background:rgba(230,57,70,0.15);color:var(--accent);">PDF</span></td>
+            <td>Vector PDF for journal submission</td>
+          </tr>
+          <tr>
+            <td><code>*_analysis.svg</code></td>
+            <td><span class="file-ext chip" style="background:rgba(42,157,143,0.15);color:var(--teal);">SVG</span></td>
+            <td>Scalable vector for web/presentations</td>
+          </tr>
+          <tr>
+            <td><code>*_report.xlsx</code></td>
+            <td><span class="file-ext chip" style="background:rgba(40,200,64,0.15);color:#28c840;">XLSX</span></td>
+            <td>Formatted 4-sheet Excel workbook</td>
+          </tr>
+          <tr>
+            <td><code>*_report.html</code></td>
+            <td><span class="file-ext chip" style="background:rgba(244,162,97,0.15);color:var(--accent2);">HTML</span></td>
+            <td>Interactive 9-tab Plotly report</td>
+          </tr>
+          <tr>
+            <td><code>*_data.json</code></td>
+            <td><span class="file-ext chip" style="background:rgba(155,93,229,0.15);color:var(--purple);">JSON</span></td>
+            <td>Structured data for programmatic use</td>
+          </tr>
+          <tr>
+            <td><code>*_sites.tsv</code></td>
+            <td><span class="file-ext chip" style="background:rgba(255,255,255,0.08);color:var(--muted);">TSV</span></td>
+            <td>Site-level table with disorder &amp; PTM columns</td>
+          </tr>
+          <tr>
+            <td><code>panels/*.png/pdf/svg</code></td>
+            <td><span class="file-ext chip" style="background:rgba(255,255,255,0.08);color:var(--muted);">×24</span></td>
+            <td>Each of the 8 panels individually exported</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── API ─────────────────────── -->
+<section id="api">
+  <div class="container">
+    <div class="section-label">API Reference</div>
+    <h2 class="section-title">Core methods</h2>
+    <p class="section-sub">All methods live on the <code style="background:var(--code-bg);padding:0.15rem 0.5rem;border-radius:5px;">PARBMDetector</code> class.</p>
+    <div class="api-grid">
+      <div class="api-card">
+        <div class="sig">detector.analyze(input_data) → dict</div>
+        <h4>analyze()</h4>
+        <p>Accepts a UniProt ID, raw sequence, FASTA string, or file path. Fetches protein metadata from UniProt, detects PAR-binding domains via InterPro, and predicts PARylation sites.</p>
+        <ul style="margin-top:0.5rem;">
+          <li><code>input_data</code> — str, auto-detected type</li>
+          <li>Returns full result dict with sites, domains, summary</li>
+        </ul>
+      </div>
+      <div class="api-card">
+        <div class="sig">detector.enrich_result(result, skip=[]) → dict</div>
+        <h4>enrich_result()</h4>
+        <p>Adds disorder scores (IUPred2A), known PTMs (PHOSPHO.ELM), pathway annotations (Reactome + KEGG), and literature (EuropePMC) to a result dict.</p>
+        <ul style="margin-top:0.5rem;">
+          <li><code>skip</code> — list of modules to omit: <code>'disorder'</code>, <code>'ptm'</code>, <code>'pathways'</code>, <code>'literature'</code></li>
+        </ul>
+      </div>
+      <div class="api-card">
+        <div class="sig">detector.export_to_folder(result, base_dir=".") → str</div>
+        <h4>export_to_folder()</h4>
+        <p>Creates a named folder and writes all output files: composite figure (PNG/PDF/SVG), 8 individual panels (×3 formats), Excel, HTML, JSON, TSV.</p>
+        <ul style="margin-top:0.5rem;">
+          <li>Returns the path to the created folder</li>
+        </ul>
+      </div>
+      <div class="api-card">
+        <div class="sig">detector.print_analysis(result)</div>
+        <h4>print_analysis()</h4>
+        <p>Prints a formatted text report to stdout with identity block (protein, gene, organism, length), PARylation summary (high-confidence count, top site), and a 10-row site detail table.</p>
+      </div>
+      <div class="api-card">
+        <div class="sig">detector.visualize_protein(result, output_file, show) → str</div>
+        <h4>visualize_protein()</h4>
+        <p>Renders the 8-panel composite figure and saves it as PNG + PDF + SVG. Also saves 8 individual panel files.</p>
+      </div>
+      <div class="api-card">
+        <div class="sig">detector.export_excel(result, output_file) → str</div>
+        <h4>export_excel()</h4>
+        <p>Writes a formatted openpyxl workbook with 4 sheets: Summary, PARylation Sites, Domains, and full Sequence with annotation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── CONTACT ─────────────────────── -->
+<section id="contact">
+  <div class="container" style="display:flex;flex-direction:column;align-items:center;">
+    <div class="section-label" style="text-align:center;">Questions & Support</div>
+    <h2 class="section-title" style="text-align:center;">Get in touch</h2>
+    <p class="section-sub" style="text-align:center;margin-left:auto;margin-right:auto;">
+      For questions about the tool, collaborations, or to report issues, contact the development group.
+    </p>
+
+    <div class="contact-card">
+      <div class="contact-header">
+        <h3>Hashemi Gheinani Lab</h3>
+        <p>Department of BioMedical Research · University of Bern</p>
+      </div>
+      <div class="contact-body">
+        <div class="contact-row">
+          <div class="contact-icon">👤</div>
+          <div>
+            <h5>Principal Investigator</h5>
+            <span>Dr. Ali Hashemi Gheinani</span>
+          </div>
+        </div>
+        <div class="contact-row">
+          <div class="contact-icon">🏷️</div>
+          <div>
+            <h5>Title</h5>
+            <span>Group Leader</span>
+          </div>
+        </div>
+        <div class="contact-row">
+          <div class="contact-icon">✉️</div>
+          <div>
+            <h5>Email</h5>
+            <a href="mailto:ali.hashemi@unibe.ch">ali.hashemi@unibe.ch</a>
+          </div>
+        </div>
+        <hr class="contact-divider"/>
+        <a class="lab-link" href="https://www.dbmr.unibe.ch/research/research_programs/hashemi_gheinani_lab/index_eng.html" target="_blank" rel="noopener">
+          <div style="font-size:1.5rem;">🔬</div>
+          <div class="lab-link-text">
+            <strong>Hashemi Gheinani Lab</strong>
+            <span>Department of BioMedical Research, University of Bern → Visit lab website</span>
+          </div>
+        </a>
+        <a class="lab-link" href="https://github.com/gheinani/parbm-detector/issues" target="_blank" rel="noopener" style="margin-top:0.7rem;">
+          <div style="font-size:1.5rem;">🐛</div>
+          <div class="lab-link-text">
+            <strong>Report an issue</strong>
+            <span>GitHub Issues tracker for bug reports and feature requests</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── FOOTER ─────────────────────── -->
+<footer>
+  <p>
+    PARBM Detector v3.1 &nbsp;·&nbsp;
+    <a href="https://github.com/gheinani/parbm-detector">GitHub</a> &nbsp;·&nbsp;
+    Hashemi Gheinani Lab, University of Bern &nbsp;·&nbsp;
+    Released under the MIT License
+  </p>
+</footer>
+
+<script>
+  function showPanel(id, btn) {
+    document.querySelectorAll('.gallery-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
