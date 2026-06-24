@@ -10,267 +10,138 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     :root {
-      --bg:       #0b0f1a;
-      --bg2:      #111827;
-      --bg3:      #1a2234;
-      --bg4:      #212d45;
-      --border:   rgba(255,255,255,0.08);
-      --accent:   #e63946;
-      --accent2:  #f4a261;
-      --blue:     #4a9eff;
-      --teal:     #2a9d8f;
-      --green:    #28c840;
-      --purple:   #9b5de5;
-      --text:     #e8eaf0;
-      --muted:    #8892a4;
-      --radius:   12px;
-      --mono:     'JetBrains Mono', monospace;
+      --bg:#0b0f1a; --bg2:#111827; --bg3:#1a2234; --bg4:#212d45;
+      --border:rgba(255,255,255,0.08);
+      --accent:#e63946; --accent2:#f4a261;
+      --blue:#4a9eff; --teal:#2a9d8f; --green:#28c840; --purple:#9b5de5;
+      --text:#e8eaf0; --muted:#8892a4; --radius:12px;
+      --mono:'JetBrains Mono',monospace;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
 
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 64px;
-      background: rgba(11,15,26,0.9); backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-brand { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1rem; color: var(--text); text-decoration: none; }
-    .nav-links { display: flex; gap: 1.6rem; list-style: none; }
-    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color .2s; }
-    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;background:rgba(11,15,26,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+    .nav-brand{display:flex;align-items:center;gap:0.6rem;font-weight:700;font-size:1rem;color:var(--text);text-decoration:none}
+    .nav-links{display:flex;gap:1.6rem;list-style:none}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:0.875rem;font-weight:500;transition:color .2s}
+    .nav-links a:hover,.nav-links a.active{color:var(--text)}
+    .nav-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 1rem;border-radius:8px;text-decoration:none;font-size:0.85rem;font-weight:600;transition:opacity .2s}
+    .nav-btn:hover{opacity:.85}
 
-    /* HERO */
-    .hero {
-      padding: 9rem 2rem 3rem;
-      text-align: center;
-      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(230,57,70,0.1) 0%, transparent 65%);
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.3rem 1rem; border-radius: 99px;
-      background: rgba(230,57,70,0.12); border: 1px solid rgba(230,57,70,0.3);
-      font-size: 0.75rem; font-weight: 700; color: var(--accent);
-      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.2rem;
-    }
-    .hero h1 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.8rem; }
-    .hero h1 span { color: var(--accent); }
-    .hero p { color: var(--muted); font-size: 1rem; max-width: 520px; margin: 0 auto; }
+    .hero{padding:9rem 2rem 2.5rem;text-align:center;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(230,57,70,0.1) 0%,transparent 65%)}
+    .hero-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem 1rem;border-radius:99px;background:rgba(230,57,70,.12);border:1px solid rgba(230,57,70,.3);font-size:.75rem;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.2rem}
+    .hero h1{font-size:clamp(1.8rem,4vw,3rem);font-weight:700;letter-spacing:-.02em;margin-bottom:.8rem}
+    .hero h1 span{color:var(--accent)}
+    .hero p{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto}
 
-    /* INPUT CARD */
-    .input-section { padding: 2rem; max-width: 700px; margin: 0 auto; }
-    .input-card {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 16px; padding: 2rem;
-    }
-    .input-row { display: flex; gap: 0.8rem; }
-    .input-field {
-      flex: 1; background: var(--bg3); border: 1.5px solid var(--border);
-      border-radius: 10px; padding: 0.8rem 1.2rem;
-      color: var(--text); font-family: var(--mono); font-size: 1rem;
-      outline: none; transition: border-color .2s;
-    }
-    .input-field:focus { border-color: var(--accent); }
-    .input-field::placeholder { color: var(--muted); }
-    .btn-analyze {
-      padding: 0.8rem 1.8rem;
-      background: var(--accent); color: #fff;
-      border: none; border-radius: 10px;
-      font-weight: 700; font-size: 0.95rem; cursor: pointer;
-      transition: all .2s; white-space: nowrap;
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .btn-analyze:hover { opacity: 0.88; transform: translateY(-1px); }
-    .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .examples {
-      margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
-    }
-    .examples span { font-size: 0.8rem; color: var(--muted); }
-    .example-chip {
-      padding: 0.2rem 0.65rem; border-radius: 99px;
-      background: var(--bg3); border: 1px solid var(--border);
-      font-size: 0.78rem; font-family: var(--mono); color: var(--blue);
-      cursor: pointer; transition: all .15s;
-    }
-    .example-chip:hover { border-color: var(--blue); background: rgba(74,158,255,0.1); }
+    .input-section{padding:2rem;max-width:700px;margin:0 auto}
+    .input-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2rem}
+    .input-row{display:flex;gap:.8rem}
+    .input-field{flex:1;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:.8rem 1.2rem;color:var(--text);font-family:var(--mono);font-size:1rem;outline:none;transition:border-color .2s}
+    .input-field:focus{border-color:var(--accent)}
+    .input-field::placeholder{color:var(--muted)}
+    .btn-analyze{padding:.8rem 1.8rem;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.95rem;cursor:pointer;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:.5rem}
+    .btn-analyze:hover{opacity:.88;transform:translateY(-1px)}
+    .btn-analyze:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .examples{margin-top:1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+    .examples span{font-size:.8rem;color:var(--muted)}
+    .example-chip{padding:.2rem .65rem;border-radius:99px;background:var(--bg3);border:1px solid var(--border);font-size:.78rem;font-family:var(--mono);color:var(--blue);cursor:pointer;transition:all .15s}
+    .example-chip:hover{border-color:var(--blue);background:rgba(74,158,255,.1)}
 
-    /* PROGRESS */
-    #progress-section { max-width: 700px; margin: 0 auto; padding: 0 2rem; display: none; }
-    .progress-card {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 16px; padding: 1.8rem;
-    }
-    .progress-title { font-weight: 600; margin-bottom: 1.2rem; font-size: 0.95rem; }
-    .progress-steps { display: flex; flex-direction: column; gap: 0.6rem; }
-    .p-step {
-      display: flex; align-items: center; gap: 0.8rem;
-      font-size: 0.875rem; color: var(--muted); transition: color .3s;
-    }
-    .p-step.done { color: var(--text); }
-    .p-step.active { color: var(--accent2); }
-    .p-step.error { color: var(--accent); }
-    .p-icon { width: 20px; text-align: center; font-size: 0.9rem; }
-    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--accent2); border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    #progress-section{max-width:700px;margin:1.5rem auto 0;padding:0 2rem;display:none}
+    .progress-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.8rem}
+    .progress-title{font-weight:600;margin-bottom:1.2rem;font-size:.95rem}
+    .progress-steps{display:flex;flex-direction:column;gap:.6rem}
+    .p-step{display:flex;align-items:center;gap:.8rem;font-size:.875rem;color:var(--muted);transition:color .3s}
+    .p-step.done{color:var(--text)} .p-step.active{color:var(--accent2)} .p-step.error-s{color:var(--accent)}
+    .p-icon{width:20px;text-align:center;font-size:.9rem}
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--accent2);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    /* ERROR */
-    #error-section { max-width: 700px; margin: 0 auto; padding: 0 2rem; display: none; }
-    .error-card {
-      background: rgba(230,57,70,0.08); border: 1px solid rgba(230,57,70,0.3);
-      border-radius: 12px; padding: 1.2rem 1.5rem;
-      display: flex; gap: 0.8rem; align-items: flex-start;
-    }
-    .error-card p { font-size: 0.88rem; color: #f87171; }
+    #error-section{max-width:700px;margin:1rem auto 0;padding:0 2rem;display:none}
+    .error-card{background:rgba(230,57,70,.08);border:1px solid rgba(230,57,70,.3);border-radius:12px;padding:1.2rem 1.5rem;display:flex;gap:.8rem;align-items:flex-start}
+    .error-card p{font-size:.88rem;color:#f87171}
 
-    /* RESULTS */
-    #results-section { max-width: 1100px; margin: 0 auto; padding: 2rem; display: none; }
+    #results-section{max-width:1100px;margin:0 auto;padding:2rem;display:none}
 
-    /* INFO CARDS */
-    .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-    .info-card {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.1rem 1.3rem;
-    }
-    .info-card .label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
-    .info-card .value { font-size: 1rem; font-weight: 600; color: var(--text); word-break: break-word; }
-    .info-card .value.accent { color: var(--accent); }
-    .info-card .value.blue { color: var(--blue); }
-    .info-card .value.teal { color: var(--teal); }
-    .info-card .value.amber { color: var(--accent2); }
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
+    .info-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.3rem}
+    .info-card .label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem}
+    .info-card .value{font-size:1rem;font-weight:600;color:var(--text);word-break:break-word}
+    .info-card .value.accent{color:var(--accent)} .info-card .value.blue{color:var(--blue)}
+    .info-card .value.teal{color:var(--teal)} .info-card .value.amber{color:var(--accent2)}
 
-    /* SECTION HEADERS */
-    .result-section-title {
-      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--accent);
-      margin: 2rem 0 1rem;
-    }
+    .result-section-title{font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:2rem 0 1rem}
 
-    /* CHART PANELS */
-    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
-    @media (max-width: 700px) { .chart-grid { grid-template-columns: 1fr; } }
-    .chart-card {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden;
-    }
-    .chart-card-header {
-      padding: 0.7rem 1.2rem;
-      background: var(--bg3); border-bottom: 1px solid var(--border);
-      font-size: 0.82rem; font-weight: 600; color: var(--muted);
-    }
-    .chart-card-body { padding: 0.5rem; }
-    .chart-full { grid-column: 1 / -1; }
+    .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.2rem}
+    @media(max-width:700px){.chart-grid{grid-template-columns:1fr}}
+    .chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+    .chart-card-header{padding:.7rem 1.2rem;background:var(--bg3);border-bottom:1px solid var(--border);font-size:.82rem;font-weight:600;color:var(--muted)}
+    .chart-card-body{padding:.5rem}
+    .chart-full{grid-column:1/-1}
 
-    /* DOMAINS */
-    .domain-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.2rem; }
-    .domain-item {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 10px; padding: 0.8rem 1.2rem;
-      display: flex; align-items: center; gap: 1rem;
-    }
-    .domain-badge {
-      padding: 0.2rem 0.6rem; border-radius: 6px;
-      font-size: 0.72rem; font-weight: 700; font-family: var(--mono);
-      background: rgba(230,57,70,0.15); color: var(--accent); white-space: nowrap;
-    }
-    .domain-name { font-size: 0.88rem; font-weight: 600; }
-    .domain-pos { font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; font-family: var(--mono); }
-    .no-domain { color: var(--muted); font-size: 0.88rem; padding: 0.5rem 0; }
+    .domain-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.2rem}
+    .domain-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.2rem;display:flex;align-items:center;gap:1rem}
+    .domain-badge{padding:.2rem .6rem;border-radius:6px;font-size:.72rem;font-weight:700;font-family:var(--mono);background:rgba(230,57,70,.15);color:var(--accent);white-space:nowrap}
+    .domain-name{font-size:.88rem;font-weight:600}
+    .domain-pos{font-size:.8rem;color:var(--muted);margin-top:.1rem;font-family:var(--mono)}
+    .no-domain{color:var(--muted);font-size:.88rem;padding:.5rem 0}
 
-    /* SITE TABLE */
-    .table-wrapper {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); overflow: hidden; margin-bottom: 1.5rem;
-    }
-    .site-table { width: 100%; border-collapse: collapse; }
-    .site-table th {
-      text-align: left; padding: 0.7rem 1rem;
-      background: var(--bg3); color: var(--muted);
-      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-      border-bottom: 1px solid var(--border); cursor: pointer; user-select: none;
-    }
-    .site-table th:hover { color: var(--text); }
-    .site-table td { padding: 0.6rem 1rem; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .site-table tr:last-child td { border-bottom: none; }
-    .site-table tr:hover td { background: var(--bg3); }
-    .conf-bar-wrap { display: flex; align-items: center; gap: 0.5rem; }
-    .conf-bar { height: 6px; border-radius: 3px; min-width: 4px; }
-    .tier-high { color: var(--accent); font-size: 0.75rem; font-weight: 700; }
-    .tier-medium { color: var(--accent2); font-size: 0.75rem; font-weight: 700; }
-    .tier-low { color: var(--muted); font-size: 0.75rem; font-weight: 700; }
-    .mono { font-family: var(--mono); }
+    .table-wrapper{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.5rem}
+    .site-table{width:100%;border-collapse:collapse}
+    .site-table th{text-align:left;padding:.7rem 1rem;background:var(--bg3);color:var(--muted);font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+    .site-table th:hover{color:var(--text)}
+    .site-table td{padding:.6rem 1rem;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.04)}
+    .site-table tr:last-child td{border-bottom:none}
+    .site-table tr:hover td{background:var(--bg3)}
+    .conf-bar-wrap{display:flex;align-items:center;gap:.5rem}
+    .conf-bar{height:6px;border-radius:3px;min-width:4px}
+    .tier-high{color:var(--accent);font-size:.75rem;font-weight:700}
+    .tier-medium{color:var(--accent2);font-size:.75rem;font-weight:700}
+    .tier-low{color:var(--muted);font-size:.75rem;font-weight:700}
+    .mono{font-family:var(--mono)}
 
-    /* DOWNLOAD */
-    .download-bar {
-      display: flex; gap: 0.8rem; flex-wrap: wrap;
-      margin: 1.5rem 0; padding: 1.2rem 1.5rem;
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: var(--radius); align-items: center;
-    }
-    .download-bar span { color: var(--muted); font-size: 0.85rem; margin-right: auto; }
-    .btn-dl {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.55rem 1.1rem;
-      border-radius: 8px; border: 1px solid var(--border);
-      background: var(--bg3); color: var(--text);
-      font-size: 0.85rem; font-weight: 600; cursor: pointer;
-      transition: all .2s; text-decoration: none;
-    }
-    .btn-dl:hover { border-color: rgba(255,255,255,0.25); background: var(--bg4); }
-    .btn-dl-primary {
-      background: var(--accent); border-color: var(--accent); color: #fff;
-      box-shadow: 0 3px 12px rgba(230,57,70,0.3);
-    }
-    .btn-dl-primary:hover { opacity: 0.88; }
+    .download-bar{display:flex;gap:.8rem;flex-wrap:wrap;margin:1.5rem 0;padding:1.2rem 1.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);align-items:center}
+    .download-bar span{color:var(--muted);font-size:.85rem;margin-right:auto}
+    .btn-dl{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+    .btn-dl:hover{border-color:rgba(255,255,255,.25);background:var(--bg4)}
+    .btn-dl-primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 3px 12px rgba(230,57,70,.3)}
+    .btn-dl-primary:hover{opacity:.88}
 
-    /* SHOW MORE */
-    #show-more-btn {
-      display: block; margin: 0.8rem auto 0; padding: 0.5rem 1.5rem;
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--muted); font-size: 0.82rem;
-      cursor: pointer; transition: all .2s;
-    }
-    #show-more-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    #show-more-btn{display:block;margin:.8rem auto 0;padding:.5rem 1.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:.82rem;cursor:pointer;transition:all .2s}
+    #show-more-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
 
-    /* FOOTER */
-    footer {
-      background: var(--bg2); border-top: 1px solid var(--border);
-      padding: 1.5rem; text-align: center;
-      color: var(--muted); font-size: 0.82rem; margin-top: 4rem;
-    }
-    footer a { color: var(--muted); }
-
-    .divider { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0; }
+    footer{background:var(--bg2);border-top:1px solid var(--border);padding:1.5rem;text-align:center;color:var(--muted);font-size:.82rem;margin-top:4rem}
+    footer a{color:var(--muted)}
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a class="nav-brand" href="index.html">
-    <span style="font-size:1.2rem;">⬡</span>
-    ParylationPredictor
+    <span style="font-size:1.2rem;">⬡</span> ParylationPredictor
   </a>
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
     <li><a href="index.html#features">Features</a></li>
     <li><a href="index.html#gallery">Gallery</a></li>
-    <li><a href="tool.html" class="active" style="color:var(--accent);">Online Tool</a></li>
+    <li><a href="tool.html" class="active" style="color:var(--accent)">Online Tool</a></li>
     <li><a href="index.html#install">Install</a></li>
     <li><a href="index.html#contact">Contact</a></li>
   </ul>
+  <a class="nav-btn" href="https://github.com/gheinani/parbm-detector" target="_blank" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:var(--text);">
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    GitHub
+  </a>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-badge">🧬 Interactive · No installation required</div>
   <h1>Try <span>ParylationPredictor</span><br/>in your browser</h1>
-  <p>Enter a UniProt accession — the tool fetches the protein, runs PARylation site prediction, and lets you download all results as a ZIP file.</p>
+  <p>Enter a UniProt accession — fetches the protein, predicts PARylation sites, shows all 8 analysis panels, and packages everything as a downloadable ZIP.</p>
 </div>
 
-<!-- INPUT -->
 <div class="input-section">
   <div class="input-card">
     <div class="input-row">
@@ -293,64 +164,50 @@
   </div>
 </div>
 
-<!-- PROGRESS -->
-<div id="progress-section" style="margin-top:1.5rem;">
+<div id="progress-section">
   <div class="progress-card">
     <div class="progress-title">Analyzing protein…</div>
-    <div class="progress-steps" id="progress-steps">
+    <div class="progress-steps">
       <div class="p-step" id="ps-uniprot"><span class="p-icon">○</span>Fetching sequence from UniProt</div>
       <div class="p-step" id="ps-interpro"><span class="p-icon">○</span>Detecting PAR-binding domains (InterPro)</div>
       <div class="p-step" id="ps-predict"><span class="p-icon">○</span>Running PARylation site prediction</div>
-      <div class="p-step" id="ps-render"><span class="p-icon">○</span>Rendering results</div>
+      <div class="p-step" id="ps-render"><span class="p-icon">○</span>Rendering 8 analysis panels</div>
     </div>
   </div>
 </div>
 
-<!-- ERROR -->
-<div id="error-section" style="margin-top:1rem;">
+<div id="error-section">
   <div class="error-card">
     <span style="font-size:1.2rem;">⚠</span>
     <p id="error-msg">An error occurred.</p>
   </div>
 </div>
 
-<!-- RESULTS -->
 <div id="results-section">
-
-  <!-- Summary info cards -->
   <div class="result-section-title">Protein Identity</div>
   <div class="info-grid" id="info-grid"></div>
-
-  <!-- Summary metrics -->
   <div class="result-section-title">PARylation Summary</div>
   <div class="info-grid" id="summary-grid"></div>
-
-  <!-- PAR-binding domains -->
   <div class="result-section-title">PAR-binding Domains</div>
   <div class="domain-list" id="domain-list"></div>
 
-  <!-- Charts row 1: confidence landscape (full width) -->
-  <div class="result-section-title">Visualizations</div>
+  <div class="result-section-title">Analysis Panels (A – H)</div>
+
+  <!-- Row 1: A full width -->
+  <div class="chart-grid">
+    <div class="chart-card chart-full">
+      <div class="chart-card-header">A · Domain Architecture</div>
+      <div class="chart-card-body"><div id="chart-arch"></div></div>
+    </div>
+  </div>
+  <!-- Row 2: B full width -->
   <div class="chart-grid">
     <div class="chart-card chart-full">
       <div class="chart-card-header">B · Confidence Landscape</div>
       <div class="chart-card-body"><div id="chart-confidence"></div></div>
     </div>
   </div>
-
-  <!-- Charts row 2 -->
-  <div class="chart-grid">
-    <div class="chart-card">
-      <div class="chart-card-header">E · Motif Breakdown</div>
-      <div class="chart-card-body"><div id="chart-motif"></div></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-card-header">H · Sites by Residue Type</div>
-      <div class="chart-card-body"><div id="chart-residue"></div></div>
-    </div>
-  </div>
-
-  <!-- Charts row 3 -->
+  <!-- Row 3: C + D -->
   <div class="chart-grid">
     <div class="chart-card">
       <div class="chart-card-header">C · Hydrophobicity Profile</div>
@@ -361,8 +218,32 @@
       <div class="chart-card-body"><div id="chart-charge"></div></div>
     </div>
   </div>
+  <!-- Row 4: E + F -->
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-card-header">E · Motif Breakdown</div>
+      <div class="chart-card-body"><div id="chart-motif"></div></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">F · Residue Composition</div>
+      <div class="chart-card-body"><div id="chart-composition"></div></div>
+    </div>
+  </div>
+  <!-- Row 5: G full width -->
+  <div class="chart-grid">
+    <div class="chart-card chart-full">
+      <div class="chart-card-header">G · Intrinsic Disorder Profile</div>
+      <div class="chart-card-body"><div id="chart-disorder"></div></div>
+    </div>
+  </div>
+  <!-- Row 6: H full width -->
+  <div class="chart-grid">
+    <div class="chart-card chart-full">
+      <div class="chart-card-header">H · PARylation Sites by Residue Type</div>
+      <div class="chart-card-body"><div id="chart-residue"></div></div>
+    </div>
+  </div>
 
-  <!-- Site table -->
   <div class="result-section-title">High-confidence PARylation Sites (≥ 0.70)</div>
   <div class="table-wrapper">
     <table class="site-table">
@@ -371,28 +252,25 @@
           <th onclick="sortTable('position')">Position ↕</th>
           <th onclick="sortTable('residue')">Residue ↕</th>
           <th onclick="sortTable('motif')">Motif Type ↕</th>
-          <th onclick="sortTable('score')">Confidence Score ↕</th>
+          <th onclick="sortTable('score')">Confidence ↕</th>
           <th>Tier</th>
         </tr>
       </thead>
       <tbody id="site-tbody"></tbody>
     </table>
-    <button id="show-more-btn" style="display:none;" onclick="showAllSites()">Show all sites</button>
+    <button id="show-more-btn" style="display:none" onclick="showAllSites()">Show all sites</button>
   </div>
 
-  <!-- Download bar -->
   <div class="download-bar">
-    <span id="dl-label">Results ready — download your files</span>
+    <span id="dl-label">Results ready</span>
     <button class="btn-dl" onclick="downloadTSV()">⬇ TSV</button>
     <button class="btn-dl" onclick="downloadJSON()">⬇ JSON</button>
-    <button class="btn-dl btn-dl-primary" onclick="downloadZIP()">
-      ⬇ Download ZIP (all files)
+    <button class="btn-dl btn-dl-primary" id="zip-btn" onclick="downloadZIP()">
+      ⬇ Download ZIP — all results + HTML report
     </button>
   </div>
-
 </div>
 
-<!-- FOOTER -->
 <footer>
   ParylationPredictor v3.1 &nbsp;·&nbsp;
   <a href="https://github.com/gheinani/parbm-detector">GitHub</a> &nbsp;·&nbsp;
@@ -401,571 +279,525 @@
 </footer>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════
-   ParylationPredictor — Browser Engine
-   Implements the same motif scoring and domain detection as the
-   Python package, calling UniProt and InterPro REST APIs directly.
-   ═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   ParylationPredictor — Browser Engine  v3.1
+   All 8 panels, full ZIP with HTML report
+   ═══════════════════════════════════════════════════════════════ */
 
-// ── Constants ───────────────────────────────────────────────────────
+// ── Constants ─────────────────────────────────────────────────
 const PARBM_DOMAINS = {
-  "IPR004170": "WWE domain",
-  "IPR018123": "WWE domain, subgroup",
-  "IPR002589": "Macro domain",
-  "IPR015398": "MacroD-type domain",
-  "IPR002126": "BRCT domain",
-  "IPR036895": "BRCT domain superfamily",
-  "IPR034642": "PAR-binding zinc finger (PBZ)",
-  "IPR000504": "RNA recognition motif (RRM)",
-  "IPR001650": "Zinc finger CCCH",
-  "IPR012317": "PARP catalytic domain",
-  "IPR024486": "PARP regulatory domain",
+  "IPR004170":"WWE domain","IPR018123":"WWE domain, subgroup",
+  "IPR002589":"Macro domain","IPR015398":"MacroD-type domain",
+  "IPR002126":"BRCT domain","IPR036895":"BRCT domain superfamily",
+  "IPR034642":"PAR-binding zinc finger (PBZ)","IPR000504":"RNA recognition motif (RRM)",
+  "IPR001650":"Zinc finger CCCH","IPR012317":"PARP catalytic domain",
+  "IPR024486":"PARP regulatory domain",
 };
+const KD={A:1.8,R:-4.5,N:-3.5,D:-3.5,C:2.5,Q:-3.5,E:-3.5,G:-0.4,H:-3.2,I:4.5,L:3.8,K:-3.9,M:1.9,F:2.8,P:-1.6,S:-0.8,T:-0.7,W:-0.9,Y:-1.3,V:4.2};
+const CHARGE={K:1,R:1,H:0.1,D:-1,E:-1};
+const DISORDER_AA={A:0.35,R:0.70,N:0.55,D:0.65,C:0.20,Q:0.60,E:0.75,G:0.45,H:0.40,I:0.15,L:0.15,K:0.75,M:0.25,F:0.15,P:0.65,S:0.60,T:0.50,W:0.15,Y:0.25,V:0.15};
+const DOMAIN_COLORS=['#e63946','#f4a261','#2a9d8f','#4a9eff','#9b5de5','#20b2aa','#ff8c00'];
 
-const KD = { A:1.8,R:-4.5,N:-3.5,D:-3.5,C:2.5,Q:-3.5,E:-3.5,G:-0.4,
-             H:-3.2,I:4.5,L:3.8,K:-3.9,M:1.9,F:2.8,P:-1.6,S:-0.8,
-             T:-0.7,W:-0.9,Y:-1.3,V:4.2 };
-
-const CHARGE = { K:1, R:1, H:0.1, D:-1, E:-1 };
-
-const PLOTLY_LAYOUT = {
-  paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-  font: { family: 'Inter, sans-serif', color: '#8892a4', size: 11 },
-  margin: { t: 10, b: 40, l: 50, r: 10 },
-  xaxis: { gridcolor: 'rgba(255,255,255,0.06)', zerolinecolor: 'rgba(255,255,255,0.08)' },
-  yaxis: { gridcolor: 'rgba(255,255,255,0.06)', zerolinecolor: 'rgba(255,255,255,0.08)' },
+const PL={paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+  font:{family:'Inter,sans-serif',color:'#8892a4',size:11},
+  margin:{t:10,b:40,l:55,r:15},
+  xaxis:{gridcolor:'rgba(255,255,255,0.06)',zerolinecolor:'rgba(255,255,255,0.08)'},
+  yaxis:{gridcolor:'rgba(255,255,255,0.06)',zerolinecolor:'rgba(255,255,255,0.08)'},
 };
+const bl=(e={})=>({...PL,...e,legend:{font:{color:'#8892a4',size:10}}});
 
-// ── State ────────────────────────────────────────────────────────────
-let currentResult = null;
-let sortKey = 'score';
-let sortDir = -1;
-let showAll = false;
+// ── State ──────────────────────────────────────────────────────
+let currentResult=null, sortKey='score', sortDir=-1, showAll=false;
 
-// ── UI helpers ───────────────────────────────────────────────────────
-function setStep(id, state) {
-  const el = document.getElementById(id);
-  el.className = 'p-step ' + state;
-  const icons = { done:'✓', active:'', pending:'○', error:'✗' };
-  const spinner = state === 'active'
-    ? '<span class="spinner"></span>'
-    : `<span class="p-icon">${icons[state] || '○'}</span>`;
-  el.innerHTML = spinner + el.innerHTML.replace(/<[^>]+>/g,'').trim();
+// ── Helpers ────────────────────────────────────────────────────
+const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+function slidingWindow(arr,w,fn){
+  return arr.map((_,i)=>{const lo=Math.max(0,i-Math.floor(w/2)),hi=Math.min(arr.length,i+Math.ceil(w/2));return fn(arr.slice(lo,hi));});
+}
+const smooth=(arr,w=13)=>slidingWindow(arr,w,mean);
+
+function hydroProfile(seq){return smooth([...seq].map(aa=>KD[aa]??0),9)}
+function chargeProfile(seq){return smooth([...seq].map(aa=>CHARGE[aa]??0),9)}
+function disorderProfile(seq){return smooth([...seq].map(aa=>DISORDER_AA[aa]??0.45),13)}
+function confidenceProfile(seq,sites){
+  const sc=new Array(seq.length).fill(0);
+  for(const s of sites)sc[s.position-1]=s.score;
+  return slidingWindow(sc,9,mean);
+}
+function aaComposition(seq){
+  const c={};for(const a of seq)c[a]=(c[a]||0)+1;return c;
 }
 
-function showError(msg) {
-  document.getElementById('progress-section').style.display = 'none';
-  const s = document.getElementById('error-section');
-  s.style.display = 'block';
-  document.getElementById('error-msg').textContent = msg;
-  document.getElementById('analyze-btn').disabled = false;
+function setStep(id,state){
+  const el=document.getElementById(id);
+  el.className='p-step '+(state==='error-s'?'error-s':state);
+  const icons={done:'✓',active:'',pending:'○',error:'✗'};
+  const ico=state==='active'?'<span class="spinner"></span>':`<span class="p-icon">${icons[state]||'○'}</span>`;
+  el.innerHTML=ico+el.textContent.trim();
 }
-
-function setExample(id) {
-  document.getElementById('uniprot-input').value = id;
+function showError(msg){
+  document.getElementById('progress-section').style.display='none';
+  document.getElementById('error-section').style.display='block';
+  document.getElementById('error-msg').textContent=msg;
+  document.getElementById('analyze-btn').disabled=false;
 }
+function setExample(id){document.getElementById('uniprot-input').value=id}
+document.getElementById('uniprot-input').addEventListener('keydown',e=>{if(e.key==='Enter')runAnalysis()});
 
-function onEnter(e) {
-  if (e.key === 'Enter') runAnalysis();
-}
-document.getElementById('uniprot-input').addEventListener('keydown', onEnter);
-
-// ── Core: motif prediction ───────────────────────────────────────────
-function predictSites(seq) {
-  const sites = [];
-  const n = seq.length;
-
-  for (let i = 0; i < n; i++) {
-    const aa = seq[i];
-    let best = { score: 0, motif: null };
-
-    const push = (score, motif) => {
-      if (score > best.score) best = { score, motif };
-    };
-
-    // SxxE  — S at i, E at i+3
-    if (aa === 'S' && i + 3 < n && seq[i+3] === 'E') push(0.85, 'SxxE');
-    // SxxE  — E at i, S at i-3
-    if (aa === 'E' && i >= 3 && seq[i-3] === 'S') push(0.90, 'SxxE');
-
-    // SxxD  — S at i, D at i+3
-    if (aa === 'S' && i + 3 < n && seq[i+3] === 'D') push(0.85, 'SxxD');
-    // SxxD  — D at i, S at i-3
-    if (aa === 'D' && i >= 3 && seq[i-3] === 'S') push(0.90, 'SxxD');
-
-    // TxxE  — T at i, E at i+3
-    if (aa === 'T' && i + 3 < n && seq[i+3] === 'E') push(0.80, 'TxxE');
-    // TxxE  — E at i, T at i-3
-    if (aa === 'E' && i >= 3 && seq[i-3] === 'T') push(0.85, 'TxxE');
-
-    // ExxE  — E at i, E at i+3
-    if (aa === 'E' && i + 3 < n && seq[i+3] === 'E') push(0.85, 'ExxE');
-    // ExxE  — E at i, E at i-3
-    if (aa === 'E' && i >= 3 && seq[i-3] === 'E') push(0.85, 'ExxE');
-
-    // Acidic cluster — 3+ E/D in 5-residue window
-    if (aa === 'E' || aa === 'D') {
-      let cnt = 0;
-      for (let j = Math.max(0, i-2); j < Math.min(n, i+3); j++) {
-        if (seq[j] === 'E' || seq[j] === 'D') cnt++;
-      }
-      if (cnt >= 3) push(0.75, 'Acidic cluster');
+// ── Motif prediction ───────────────────────────────────────────
+function predictSites(seq){
+  const sites=[],n=seq.length;
+  for(let i=0;i<n;i++){
+    const aa=seq[i];
+    let best={score:0,motif:null};
+    const push=(s,m)=>{if(s>best.score)best={score:s,motif:m}};
+    if(aa==='S'&&i+3<n&&seq[i+3]==='E')push(0.85,'SxxE');
+    if(aa==='E'&&i>=3&&seq[i-3]==='S')push(0.90,'SxxE');
+    if(aa==='S'&&i+3<n&&seq[i+3]==='D')push(0.85,'SxxD');
+    if(aa==='D'&&i>=3&&seq[i-3]==='S')push(0.90,'SxxD');
+    if(aa==='T'&&i+3<n&&seq[i+3]==='E')push(0.80,'TxxE');
+    if(aa==='E'&&i>=3&&seq[i-3]==='T')push(0.85,'TxxE');
+    if(aa==='E'&&i+3<n&&seq[i+3]==='E')push(0.85,'ExxE');
+    if(aa==='E'&&i>=3&&seq[i-3]==='E')push(0.85,'ExxE');
+    if(aa==='E'||aa==='D'){
+      let cnt=0;
+      for(let j=Math.max(0,i-2);j<Math.min(n,i+3);j++)if(seq[j]==='E'||seq[j]==='D')cnt++;
+      if(cnt>=3)push(0.75,'Acidic cluster');
     }
+    if(best.score>0)sites.push({position:i+1,residue:aa,score:best.score,motif:best.motif});
+  }
+  return sites.sort((a,b)=>b.score-a.score);
+}
 
-    if (best.score > 0) {
-      sites.push({ position: i + 1, residue: aa, score: best.score, motif: best.motif });
+// ── API calls ──────────────────────────────────────────────────
+async function fetchUniprot(uid){
+  const r=await fetch(`https://rest.uniprot.org/uniprotkb/${uid}?format=json&fields=accession,protein_name,organism_name,sequence,gene_names`);
+  if(!r.ok)throw new Error(`UniProt returned ${r.status} for "${uid}". Please check the accession ID.`);
+  const d=await r.json();
+  return{
+    uid,
+    name:d.proteinDescription?.recommendedName?.fullName?.value||d.proteinDescription?.submissionNames?.[0]?.fullName?.value||'Unknown',
+    gene:d.genes?.[0]?.geneName?.value||'N/A',
+    org:(()=>{const s=d.organism?.scientificName||'',c=d.organism?.commonName||'';return c?`${s} (${c})`:s})(),
+    seq:d.sequence?.value||'',
+  };
+}
+async function fetchDomains(uid){
+  try{
+    const r=await fetch(`https://www.ebi.ac.uk/interpro/api/entry/interpro/protein/UniProt/${uid}?page_size=50`,{headers:{Accept:'application/json'}});
+    if(!r.ok)return[];
+    const data=await r.json();
+    const out=[];
+    for(const entry of data.results||[]){
+      const id=entry.metadata?.accession;
+      if(!id||!PARBM_DOMAINS[id])continue;
+      for(const loc of entry.proteins?.[0]?.entry_protein_locations||[])
+        for(const frag of loc.fragments||[])
+          out.push({accession:id,name:PARBM_DOMAINS[id],start:frag.start,end:frag.end});
     }
-  }
-
-  return sites.sort((a, b) => b.score - a.score);
+    return out;
+  }catch{return[]}
 }
 
-// ── Sliding-window helpers ───────────────────────────────────────────
-function slidingWindow(arr, w, fn) {
-  const out = [];
-  for (let i = 0; i < arr.length; i++) {
-    const lo = Math.max(0, i - Math.floor(w/2));
-    const hi = Math.min(arr.length, i + Math.ceil(w/2));
-    out.push(fn(arr.slice(lo, hi)));
-  }
-  return out;
-}
-const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+// ── Main analysis ──────────────────────────────────────────────
+async function runAnalysis(){
+  const uid=document.getElementById('uniprot-input').value.trim().toUpperCase();
+  if(!uid)return;
+  document.getElementById('error-section').style.display='none';
+  document.getElementById('results-section').style.display='none';
+  document.getElementById('analyze-btn').disabled=true;
+  document.getElementById('progress-section').style.display='block';
+  ['ps-uniprot','ps-interpro','ps-predict','ps-render'].forEach(id=>setStep(id,'pending'));
 
-function confidenceProfile(seq, sites) {
-  const scores = new Array(seq.length).fill(0);
-  for (const s of sites) scores[s.position - 1] = s.score;
-  return slidingWindow(scores, 9, mean);
-}
+  try{
+    setStep('ps-uniprot','active');
+    const prot=await fetchUniprot(uid);
+    setStep('ps-uniprot','done');
 
-function hydroProfile(seq) {
-  const raw = [...seq].map(aa => KD[aa] ?? 0);
-  return slidingWindow(raw, 9, mean);
-}
+    setStep('ps-interpro','active');
+    const domains=await fetchDomains(uid);
+    setStep('ps-interpro','done');
 
-function chargeProfile(seq) {
-  const raw = [...seq].map(aa => CHARGE[aa] ?? 0);
-  return slidingWindow(raw, 9, mean);
-}
+    setStep('ps-predict','active');
+    const sites=predictSites(prot.seq);
+    const hcSites=sites.filter(s=>s.score>=0.70);
+    setStep('ps-predict','done');
 
-// ── InterPro domain fetch ─────────────────────────────────────────────
-async function fetchDomains(uid) {
-  const url = `https://www.ebi.ac.uk/interpro/api/entry/interpro/protein/UniProt/${uid}?page_size=50`;
-  try {
-    const resp = await fetch(url, { headers: { Accept: 'application/json' } });
-    if (!resp.ok) return [];
-    const data = await resp.json();
-    const results = data.results || [];
-    const domains = [];
-    for (const entry of results) {
-      const iprId = entry.metadata?.accession;
-      if (!iprId || !PARBM_DOMAINS[iprId]) continue;
-      const locs = entry.proteins?.[0]?.entry_protein_locations || [];
-      for (const loc of locs) {
-        const frags = loc.fragments || [];
-        for (const frag of frags) {
-          domains.push({
-            accession: iprId,
-            name: PARBM_DOMAINS[iprId],
-            start: frag.start,
-            end: frag.end,
-            is_parbm: true,
-          });
-        }
-      }
-    }
-    return domains;
-  } catch {
-    return [];   // CORS or network failure — continue gracefully
-  }
-}
+    setStep('ps-render','active');
+    currentResult={prot,domains,sites,hcSites};
 
-// ── UniProt fetch ────────────────────────────────────────────────────
-async function fetchUniprot(uid) {
-  const fields = 'accession,id,protein_name,organism_name,sequence,gene_names';
-  const url = `https://rest.uniprot.org/uniprotkb/${uid}?format=json&fields=${fields}`;
-  const resp = await fetch(url);
-  if (!resp.ok) throw new Error(`UniProt returned ${resp.status} for "${uid}". Check the accession.`);
-  const data = await resp.json();
+    // Show section with invisible first so Plotly gets real pixel dimensions
+    const rs=document.getElementById('results-section');
+    rs.style.visibility='hidden';
+    rs.style.display='block';
 
-  const name = data.proteinDescription?.recommendedName?.fullName?.value
-            || data.proteinDescription?.submissionNames?.[0]?.fullName?.value
-            || 'Unknown';
-  const gene = data.genes?.[0]?.geneName?.value || 'N/A';
-  const org  = (() => {
-    const sci = data.organism?.scientificName || '';
-    const com = data.organism?.commonName || '';
-    return com ? `${sci} (${com})` : sci;
-  })();
-  const seq  = data.sequence?.value || '';
-  return { uid, name, gene, org, seq };
-}
-
-// ── Main analysis ────────────────────────────────────────────────────
-async function runAnalysis() {
-  const raw = document.getElementById('uniprot-input').value.trim().toUpperCase();
-  if (!raw) return;
-
-  // reset UI
-  document.getElementById('error-section').style.display = 'none';
-  document.getElementById('results-section').style.display = 'none';
-  document.getElementById('analyze-btn').disabled = true;
-  document.getElementById('progress-section').style.display = 'block';
-  ['ps-uniprot','ps-interpro','ps-predict','ps-render'].forEach(id =>
-    setStep(id, 'pending'));
-
-  try {
-    // Step 1 — UniProt
-    setStep('ps-uniprot', 'active');
-    const prot = await fetchUniprot(raw);
-    setStep('ps-uniprot', 'done');
-
-    // Step 2 — InterPro
-    setStep('ps-interpro', 'active');
-    const domains = await fetchDomains(raw);
-    setStep('ps-interpro', domains.length > 0 ? 'done' : 'done'); // graceful
-
-    // Step 3 — Predict
-    setStep('ps-predict', 'active');
-    const sites = predictSites(prot.seq);
-    const hcSites = sites.filter(s => s.score >= 0.70);
-    setStep('ps-predict', 'done');
-
-    // Step 4 — Render
-    // Show section FIRST so Plotly gets real pixel dimensions, then render
-    setStep('ps-render', 'active');
-    currentResult = { prot, domains, sites, hcSites };
-
-    document.getElementById('progress-section').style.display = 'none';
-    const rs = document.getElementById('results-section');
-    rs.style.visibility = 'hidden';
-    rs.style.display = 'block';
-
-    // Populate non-chart content immediately
     renderInfo(currentResult);
     renderDomains(currentResult);
     renderTable(hcSites);
 
-    // Let browser paint the layout, then render charts with correct dimensions
-    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    // Two animation frames so browser has laid out the DOM
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
     renderCharts(currentResult);
 
-    rs.style.visibility = 'visible';
-    setStep('ps-render', 'done');
-    rs.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    rs.style.visibility='visible';
+    document.getElementById('progress-section').style.display='none';
+    setStep('ps-render','done');
+    rs.scrollIntoView({behavior:'smooth',block:'start'});
 
-  } catch(err) {
-    showError(err.message || 'Unexpected error.');
-  }
-
-  document.getElementById('analyze-btn').disabled = false;
+  }catch(err){showError(err.message||'Unexpected error.')}
+  document.getElementById('analyze-btn').disabled=false;
 }
 
-// ── Render helpers (called in sequence so Plotly gets real dimensions) ──
-function renderInfo(res) {
-  const { prot, domains, sites, hcSites } = res;
-  const top = hcSites[0];
-
-  document.getElementById('info-grid').innerHTML = [
-    { label: 'Protein',     value: prot.name },
-    { label: 'Gene',        value: prot.gene,                        cls: 'blue' },
-    { label: 'UniProt ID',  value: prot.uid,                         cls: 'blue' },
-    { label: 'Organism',    value: prot.org },
-    { label: 'Amino acids', value: prot.seq.length.toLocaleString(), cls: 'teal' },
-  ].map(c => `<div class="info-card"><div class="label">${c.label}</div>
-    <div class="value ${c.cls||''}">${c.value}</div></div>`).join('');
-
-  document.getElementById('summary-grid').innerHTML = [
-    { label: 'PAR-binding domains',       value: domains.length ? domains.map(d=>d.name).join(', ') : 'None detected', cls: domains.length ? 'accent' : '' },
-    { label: 'High-conf sites (≥0.70)',   value: hcSites.length + ' sites', cls: hcSites.length ? 'accent' : '' },
-    { label: 'All predicted sites',       value: sites.length + ' sites' },
-    { label: 'Top site',                  value: top ? `${top.residue}${top.position} · ${top.motif} · ${top.score.toFixed(2)}` : 'None', cls: top ? 'amber' : '' },
-  ].map(c => `<div class="info-card"><div class="label">${c.label}</div>
-    <div class="value ${c.cls||''}">${c.value}</div></div>`).join('');
-
-  document.getElementById('dl-label').textContent =
-    `${prot.name} (${prot.uid}) — ${hcSites.length} high-confidence sites`;
+// ── Render info + domains ──────────────────────────────────────
+function renderInfo(res){
+  const{prot,domains,sites,hcSites}=res,top=hcSites[0];
+  document.getElementById('info-grid').innerHTML=[
+    {label:'Protein',value:prot.name},
+    {label:'Gene',value:prot.gene,cls:'blue'},
+    {label:'UniProt ID',value:prot.uid,cls:'blue'},
+    {label:'Organism',value:prot.org},
+    {label:'Amino acids',value:prot.seq.length.toLocaleString(),cls:'teal'},
+  ].map(c=>`<div class="info-card"><div class="label">${c.label}</div><div class="value ${c.cls||''}">${c.value}</div></div>`).join('');
+  document.getElementById('summary-grid').innerHTML=[
+    {label:'PAR-binding domains',value:domains.length?domains.map(d=>d.name).join(', '):'None detected',cls:domains.length?'accent':''},
+    {label:'High-conf sites (≥0.70)',value:hcSites.length+' sites',cls:hcSites.length?'accent':''},
+    {label:'All predicted sites',value:sites.length+' sites'},
+    {label:'Top site',value:top?`${top.residue}${top.position} · ${top.motif} · ${top.score.toFixed(2)}`:'None',cls:top?'amber':''},
+  ].map(c=>`<div class="info-card"><div class="label">${c.label}</div><div class="value ${c.cls||''}">${c.value}</div></div>`).join('');
+  document.getElementById('dl-label').textContent=`${prot.name} (${prot.uid}) — ${hcSites.length} high-confidence sites`;
+}
+function renderDomains(res){
+  const dl=document.getElementById('domain-list');
+  dl.innerHTML=res.domains.length===0
+    ?'<p class="no-domain">No PAR-binding domains detected via InterPro.</p>'
+    :res.domains.map(d=>`<div class="domain-item"><span class="domain-badge">${d.accession}</span><div><div class="domain-name">${d.name}</div>${d.start?`<div class="domain-pos">Residues ${d.start}–${d.end}</div>`:''}</div></div>`).join('');
 }
 
-function renderDomains(res) {
-  const { domains } = res;
-  const dl = document.getElementById('domain-list');
-  if (domains.length === 0) {
-    dl.innerHTML = '<p class="no-domain">No PAR-binding domains detected via InterPro.</p>';
-  } else {
-    dl.innerHTML = domains.map(d => `
-      <div class="domain-item">
-        <span class="domain-badge">${d.accession}</span>
-        <div>
-          <div class="domain-name">${d.name}</div>
-          ${d.start ? `<div class="domain-pos">Residues ${d.start}–${d.end}</div>` : ''}
-        </div>
-      </div>`).join('');
-  }
-}
+// ── All 8 chart panels ─────────────────────────────────────────
+function renderCharts(res){
+  const{prot,domains,sites,hcSites}=res;
+  const seq=prot.seq,n=seq.length;
+  const x=Array.from({length:n},(_,i)=>i+1);
+  const conf=confidenceProfile(seq,sites);
+  const hydro=hydroProfile(seq);
+  const charge=chargeProfile(seq);
+  const disorder=disorderProfile(seq);
 
-function renderCharts(res) {
-  const { prot, hcSites, sites } = res;
-  const seq = prot.seq;
-  const x = Array.from({ length: seq.length }, (_, i) => i + 1);
-  const conf = confidenceProfile(seq, sites);
-  const hydro = hydroProfile(seq);
-  const charge = chargeProfile(seq);
-
-  const baseLayout = (extra={}) => ({
-    ...PLOTLY_LAYOUT, ...extra,
-    legend: { font: { color: '#8892a4', size: 10 } },
+  // ── A: Domain Architecture ────────────────────────────────
+  const shapes=[{type:'line',x0:1,x1:n,y0:0.5,y1:0.5,line:{color:'#4a5568',width:4}}];
+  const annotations=[];
+  domains.forEach((d,i)=>{
+    if(!d.start)return;
+    shapes.push({type:'rect',x0:d.start,x1:d.end,y0:0.3,y1:0.7,fillcolor:DOMAIN_COLORS[i%DOMAIN_COLORS.length],line:{width:0},opacity:0.9});
+    const mid=(d.start+d.end)/2;
+    const label=d.name.length>18?d.name.slice(0,16)+'…':d.name;
+    annotations.push({x:mid,y:0.85,text:`<b>${label}</b>`,showarrow:true,arrowhead:2,arrowsize:0.8,arrowcolor:'#8892a4',ay:-25,font:{size:9.5,color:'#e8eaf0'}});
   });
+  Plotly.newPlot('chart-arch',[
+    {x:hcSites.map(s=>s.position),y:hcSites.map(()=>0.5),mode:'markers',name:'HC site',
+     marker:{color:'#e63946',size:9,symbol:'line-ns-open',line:{color:'#e63946',width:2.5}}},
+  ],{...bl({height:200}),shapes,annotations,
+    xaxis:{...PL.xaxis,title:'Residue position',range:[0,n+1]},
+    yaxis:{...PL.yaxis,range:[0,1.15],showticklabels:false,showgrid:false,zeroline:false},
+  },{responsive:true,displayModeBar:false});
 
-  // Confidence landscape
-  const siteX = hcSites.map(s => s.position);
-  const siteY = hcSites.map(s => s.score);
-  Plotly.newPlot('chart-confidence', [
-    { x, y: conf, mode:'lines', line:{ color:'rgba(74,158,255,0.5)', width:1.5 },
-      fill:'tozeroy', fillcolor:'rgba(74,158,255,0.06)', name:'Profile' },
-    { x: siteX, y: siteY, mode:'markers', name:'High-conf site',
-      marker:{ color:'#e63946', size:6, symbol:'circle' } },
-  ], { ...baseLayout({ height: 200 }),
-    xaxis: { ...PLOTLY_LAYOUT.xaxis, title: 'Residue position' },
-    yaxis: { ...PLOTLY_LAYOUT.yaxis, title: 'Score', range:[0,1.05] },
-    shapes: [
-      { type:'line', x0:0, x1:seq.length, y0:0.70, y1:0.70,
-        line:{ color:'rgba(230,57,70,0.4)', width:1, dash:'dot' } },
-    ],
-  }, { responsive: true, displayModeBar: false });
+  // ── B: Confidence landscape ────────────────────────────────
+  Plotly.newPlot('chart-confidence',[
+    {x,y:conf,mode:'lines',fill:'tozeroy',line:{color:'rgba(74,158,255,0.6)',width:1.5},fillcolor:'rgba(74,158,255,0.07)',name:'Score profile'},
+    {x:hcSites.map(s=>s.position),y:hcSites.map(s=>s.score),mode:'markers',name:'HC site',marker:{color:'#e63946',size:6}},
+  ],{...bl({height:200}),
+    xaxis:{...PL.xaxis,title:'Residue position'},
+    yaxis:{...PL.yaxis,title:'Score',range:[0,1.08]},
+    shapes:[{type:'line',x0:0,x1:n,y0:0.70,y1:0.70,line:{color:'rgba(230,57,70,0.45)',width:1,dash:'dot'}}],
+  },{responsive:true,displayModeBar:false});
 
-  // Motif breakdown
-  const motifCounts = {};
-  for (const s of hcSites) motifCounts[s.motif] = (motifCounts[s.motif]||0) + 1;
-  const mKeys = Object.keys(motifCounts);
-  const mColors = ['#e63946','#f4a261','#2a9d8f','#4a9eff','#9b5de5'];
-  Plotly.newPlot('chart-motif', [{
-    x: mKeys, y: mKeys.map(k => motifCounts[k]),
-    type: 'bar', marker: { color: mColors.slice(0, mKeys.length) },
-    text: mKeys.map(k => motifCounts[k]), textposition: 'outside',
-  }], { ...baseLayout({ height: 220 }),
-    yaxis: { ...PLOTLY_LAYOUT.yaxis, title: 'Site count' },
-  }, { responsive: true, displayModeBar: false });
+  // ── C: Hydrophobicity ──────────────────────────────────────
+  Plotly.newPlot('chart-hydro',[
+    {x,y:hydro,mode:'lines',fill:'tozeroy',line:{color:'#2a9d8f',width:1.5},fillcolor:'rgba(42,157,143,0.12)',name:'KD'},
+  ],{...bl({height:200}),
+    xaxis:{...PL.xaxis,title:'Position'},
+    yaxis:{...PL.yaxis,title:'Hydrophobicity'},
+    shapes:[{type:'line',x0:0,x1:n,y0:0,y1:0,line:{color:'rgba(255,255,255,0.12)',width:1}}],
+  },{responsive:true,displayModeBar:false});
 
-  // Residue type breakdown
-  const aaOrder = ['S','T','E','D','Y','K','R'];
-  const aaColours = ['#e63946','#f4a261','#2a9d8f','#457b9d','#9b5de5','#20b2aa','#ff8c00'];
-  const allCnts = {}, hcCnts = {};
-  for (const s of sites) allCnts[s.residue] = (allCnts[s.residue]||0)+1;
-  for (const s of hcSites) hcCnts[s.residue] = (hcCnts[s.residue]||0)+1;
-  Plotly.newPlot('chart-residue', [
-    { x: aaOrder, y: aaOrder.map(a=>allCnts[a]||0), name:'All sites',
-      type:'bar', marker:{ color: aaColours.map(c=>c+'88') }, opacity:0.7 },
-    { x: aaOrder, y: aaOrder.map(a=>hcCnts[a]||0), name:'High-conf (≥0.70)',
-      type:'bar', marker:{ color: aaColours } },
-  ], { ...baseLayout({ height: 220, barmode:'group' }),
-    yaxis: { ...PLOTLY_LAYOUT.yaxis, title: 'Count' },
-  }, { responsive: true, displayModeBar: false });
+  // ── D: Charge ──────────────────────────────────────────────
+  Plotly.newPlot('chart-charge',[
+    {x,y:charge,mode:'lines',fill:'tozeroy',line:{color:'#9b5de5',width:1.5},fillcolor:'rgba(155,93,229,0.10)',name:'Charge'},
+  ],{...bl({height:200}),
+    xaxis:{...PL.xaxis,title:'Position'},
+    yaxis:{...PL.yaxis,title:'Net charge'},
+    shapes:[{type:'line',x0:0,x1:n,y0:0,y1:0,line:{color:'rgba(255,255,255,0.12)',width:1}}],
+  },{responsive:true,displayModeBar:false});
 
-  // Hydrophobicity
-  Plotly.newPlot('chart-hydro', [{
-    x, y: hydro, mode:'lines', fill:'tozeroy',
-    line:{ color:'#2a9d8f', width:1.5 }, fillcolor:'rgba(42,157,143,0.12)', name:'KD'
-  }], { ...baseLayout({ height: 180 }),
-    xaxis: { ...PLOTLY_LAYOUT.xaxis, title: 'Position' },
-    yaxis: { ...PLOTLY_LAYOUT.yaxis, title: 'Hydrophobicity' },
-    shapes: [{ type:'line', x0:0, x1:seq.length, y0:0, y1:0,
-      line:{ color:'rgba(255,255,255,0.12)', width:1 } }],
-  }, { responsive: true, displayModeBar: false });
+  // ── E: Motif breakdown ─────────────────────────────────────
+  const mc={};for(const s of hcSites)mc[s.motif]=(mc[s.motif]||0)+1;
+  const mk=Object.keys(mc);
+  Plotly.newPlot('chart-motif',[{
+    x:mk,y:mk.map(k=>mc[k]),type:'bar',
+    marker:{color:['#e63946','#f4a261','#2a9d8f','#4a9eff','#9b5de5'].slice(0,mk.length)},
+    text:mk.map(k=>mc[k]),textposition:'outside',
+  }],{...bl({height:220}),yaxis:{...PL.yaxis,title:'Site count'}},{responsive:true,displayModeBar:false});
 
-  // Charge
-  Plotly.newPlot('chart-charge', [{
-    x, y: charge, mode:'lines',
-    line:{ color:'#9b5de5', width:1.5 }, name:'Charge',
-    fill:'tozeroy', fillcolor:'rgba(155,93,229,0.10)',
-  }], { ...baseLayout({ height: 180 }),
-    xaxis: { ...PLOTLY_LAYOUT.xaxis, title: 'Position' },
-    yaxis: { ...PLOTLY_LAYOUT.yaxis, title: 'Net charge' },
-    shapes: [{ type:'line', x0:0, x1:seq.length, y0:0, y1:0,
-      line:{ color:'rgba(255,255,255,0.12)', width:1 } }],
-  }, { responsive: true, displayModeBar: false });
+  // ── F: Amino-acid composition pie ─────────────────────────
+  const comp=aaComposition(seq);
+  const aaKeys=Object.keys(comp).sort((a,b)=>comp[b]-comp[a]).slice(0,10);
+  Plotly.newPlot('chart-composition',[{
+    type:'pie',
+    labels:aaKeys,
+    values:aaKeys.map(k=>comp[k]),
+    hole:0.38,
+    textinfo:'label+percent',
+    textfont:{size:10},
+    marker:{colors:['#e63946','#f4a261','#2a9d8f','#4a9eff','#9b5de5','#20b2aa','#ff8c00','#8892a4','#28c840','#c9a96e']},
+  }],{...PL,height:230,margin:{t:10,b:10,l:10,r:10},showlegend:false},{responsive:true,displayModeBar:false});
+
+  // ── G: Disorder profile ────────────────────────────────────
+  const disordered=disorder.map(v=>v>=0.5?v:null);
+  const ordered=disorder.map(v=>v<0.5?v:null);
+  Plotly.newPlot('chart-disorder',[
+    {x,y:ordered,mode:'lines',fill:'tozeroy',line:{color:'rgba(136,146,164,0.6)',width:1},fillcolor:'rgba(136,146,164,0.06)',name:'Ordered'},
+    {x,y:disordered,mode:'lines',fill:'tozeroy',line:{color:'#9b5de5',width:1.5},fillcolor:'rgba(155,93,229,0.15)',name:'Disordered (>0.5)'},
+    {x:hcSites.map(s=>s.position),y:hcSites.map(()=>0.02),mode:'markers',name:'HC site',marker:{color:'#e63946',size:5,symbol:'line-ns-open',line:{color:'#e63946',width:2}}},
+  ],{...bl({height:200}),
+    xaxis:{...PL.xaxis,title:'Residue position'},
+    yaxis:{...PL.yaxis,title:'Disorder score',range:[0,1.08]},
+    shapes:[{type:'line',x0:0,x1:n,y0:0.5,y1:0.5,line:{color:'rgba(155,93,229,0.45)',width:1,dash:'dot'}}],
+  },{responsive:true,displayModeBar:false});
+
+  // ── H: Residue type breakdown ──────────────────────────────
+  const aaOrder=['S','T','E','D','Y','K','R'];
+  const aaCol=['#e63946','#f4a261','#2a9d8f','#457b9d','#9b5de5','#20b2aa','#ff8c00'];
+  const allC={},hcC={};
+  for(const s of sites)allC[s.residue]=(allC[s.residue]||0)+1;
+  for(const s of hcSites)hcC[s.residue]=(hcC[s.residue]||0)+1;
+  Plotly.newPlot('chart-residue',[
+    {x:aaOrder,y:aaOrder.map(a=>allC[a]||0),name:'All sites',type:'bar',marker:{color:aaCol},opacity:0.45},
+    {x:aaOrder,y:aaOrder.map(a=>hcC[a]||0),name:'High-conf (≥0.70)',type:'bar',marker:{color:aaCol}},
+  ],{...bl({height:220,barmode:'group'}),yaxis:{...PL.yaxis,title:'Count'}},{responsive:true,displayModeBar:false});
 }
 
-// ── Table ────────────────────────────────────────────────────────────
-const TIER_MAX = 15;
-
-function renderTable(hcSites, all=false) {
-  const data = [...hcSites].sort((a,b) => sortDir * (
-    typeof a[sortKey] === 'number'
-      ? a[sortKey] - b[sortKey]
-      : a[sortKey].localeCompare(b[sortKey])
+// ── Site table ─────────────────────────────────────────────────
+const TIER_MAX=15;
+function renderTable(hcSites,all=false){
+  const data=[...hcSites].sort((a,b)=>sortDir*(
+    typeof a[sortKey]==='number'?a[sortKey]-b[sortKey]:a[sortKey].localeCompare(b[sortKey])
   ));
-  const show = all ? data : data.slice(0, TIER_MAX);
-  const btn = document.getElementById('show-more-btn');
-
-  document.getElementById('site-tbody').innerHTML = show.map(s => {
-    const pct = Math.round(s.score * 100);
-    const tier = s.score >= 0.70 ? 'HIGH' : s.score >= 0.50 ? 'MED' : 'LOW';
-    const tierCls = s.score >= 0.70 ? 'tier-high' : s.score >= 0.50 ? 'tier-medium' : 'tier-low';
-    const barColour = s.score >= 0.70 ? '#e63946' : s.score >= 0.50 ? '#f4a261' : '#8892a4';
-    return `<tr>
+  const show=all?data:data.slice(0,TIER_MAX);
+  const btn=document.getElementById('show-more-btn');
+  document.getElementById('site-tbody').innerHTML=show.map(s=>{
+    const pct=Math.round(s.score*100);
+    const barC=s.score>=0.70?'#e63946':s.score>=0.50?'#f4a261':'#8892a4';
+    const tierCls=s.score>=0.70?'tier-high':s.score>=0.50?'tier-medium':'tier-low';
+    const tier=s.score>=0.70?'HIGH':s.score>=0.50?'MED':'LOW';
+    return`<tr>
       <td class="mono">${s.position}</td>
       <td><strong>${s.residue}</strong>${s.position}</td>
       <td class="mono">${s.motif}</td>
-      <td>
-        <div class="conf-bar-wrap">
-          <div class="conf-bar" style="width:${pct}px;max-width:100px;background:${barColour};"></div>
-          <span class="mono">${s.score.toFixed(2)}</span>
-        </div>
-      </td>
-      <td><span class="${tierCls}">${tier}</span></td>
-    </tr>`;
+      <td><div class="conf-bar-wrap"><div class="conf-bar" style="width:${pct}px;max-width:100px;background:${barC}"></div><span class="mono">${s.score.toFixed(2)}</span></div></td>
+      <td><span class="${tierCls}">${tier}</span></td></tr>`;
   }).join('');
-
-  if (!all && data.length > TIER_MAX) {
-    btn.style.display = 'block';
-    btn.textContent = `Show all ${data.length} sites`;
-  } else {
-    btn.style.display = 'none';
-  }
+  btn.style.display=(!all&&data.length>TIER_MAX)?'block':'none';
+  if(!all&&data.length>TIER_MAX)btn.textContent=`Show all ${data.length} sites`;
 }
-
-function sortTable(key) {
-  if (sortKey === key) sortDir *= -1;
-  else { sortKey = key; sortDir = -1; }
-  if (currentResult) renderTable(currentResult.hcSites, showAll);
+function sortTable(key){
+  if(sortKey===key)sortDir*=-1;else{sortKey=key;sortDir=-1;}
+  if(currentResult)renderTable(currentResult.hcSites,showAll);
 }
+function showAllSites(){showAll=true;renderTable(currentResult.hcSites,true)}
 
-function showAllSites() {
-  showAll = true;
-  renderTable(currentResult.hcSites, true);
-}
-
-// ── Download helpers ─────────────────────────────────────────────────
-function buildTSV() {
-  const { prot, hcSites } = currentResult;
-  const header = 'Position\tResidue\tMotif_Type\tConfidence_Score\tTier\tProtein\tUniProt_ID';
-  const rows = hcSites.map(s => {
-    const tier = s.score >= 0.70 ? 'high' : s.score >= 0.50 ? 'medium' : 'low';
-    return `${s.position}\t${s.residue}\t${s.motif}\t${s.score.toFixed(4)}\t${tier}\t${prot.name}\t${prot.uid}`;
+// ── Data builders ──────────────────────────────────────────────
+function buildTSV(){
+  const{prot,hcSites}=currentResult;
+  const hdr='Position\tResidue\tMotif_Type\tConfidence_Score\tTier\tProtein\tUniProt_ID';
+  const rows=hcSites.map(s=>{
+    const tier=s.score>=0.70?'high':s.score>=0.50?'medium':'low';
+    return`${s.position}\t${s.residue}\t${s.motif}\t${s.score.toFixed(4)}\t${tier}\t${prot.name}\t${prot.uid}`;
   });
-  return header + '\n' + rows.join('\n');
+  return hdr+'\n'+rows.join('\n');
 }
-
-function buildJSON() {
-  const { prot, domains, sites, hcSites } = currentResult;
-  const top = hcSites[0];
+function buildJSON(){
+  const{prot,domains,sites,hcSites}=currentResult,top=hcSites[0];
   return JSON.stringify({
-    schema_version: '3.0',
-    generated: new Date().toISOString(),
-    source: 'ParylationPredictor Online Tool',
-    protein: {
-      uniprot_id: prot.uid, protein_name: prot.name,
-      gene_name: prot.gene, organism: prot.org,
-      sequence_length: prot.seq.length, sequence: prot.seq,
-    },
-    summary: {
-      parbm_domains: domains.length ? domains.map(d=>d.name).join(', ') : 'None detected',
-      high_confidence_sites: hcSites.length,
-      all_sites: sites.length,
-      top_site: top ? `${top.residue}${top.position} via ${top.motif}, score ${top.score.toFixed(2)}` : 'None',
-    },
-    parbm_domains: domains,
-    predictions: hcSites.map(s => ({
-      position: s.position, residue: s.residue, motif_type: s.motif,
-      confidence: parseFloat(s.score.toFixed(4)),
-      tier: s.score >= 0.70 ? 'high' : s.score >= 0.50 ? 'medium' : 'low',
-    })),
-  }, null, 2);
+    schema_version:'3.0',generated:new Date().toISOString(),source:'ParylationPredictor Online Tool',
+    protein:{uniprot_id:prot.uid,protein_name:prot.name,gene_name:prot.gene,organism:prot.org,sequence_length:prot.seq.length,sequence:prot.seq},
+    summary:{parbm_domains:domains.length?domains.map(d=>d.name).join(', '):'None detected',high_confidence_sites:hcSites.length,all_sites:sites.length,top_site:top?`${top.residue}${top.position} via ${top.motif}, score ${top.score.toFixed(2)}`:'None'},
+    parbm_domains:domains,
+    predictions:hcSites.map(s=>({position:s.position,residue:s.residue,motif_type:s.motif,confidence:parseFloat(s.score.toFixed(4)),tier:s.score>=0.70?'high':s.score>=0.50?'medium':'low'})),
+  },null,2);
 }
-
-function buildSummaryTXT() {
-  const { prot, domains, hcSites } = currentResult;
-  const top = hcSites[0];
-  const sep = '─'.repeat(56);
-  return [
+function buildSummaryTXT(){
+  const{prot,domains,hcSites}=currentResult,top=hcSites[0],sep='─'.repeat(56);
+  return[sep,'    ParylationPredictor — ANALYSIS REPORT',sep,
+    `Protein        ${prot.name}`,`Gene           ${prot.gene}`,
+    `UniProt ID     ${prot.uid}`,`Organism       ${prot.org}`,`Amino acids    ${prot.seq.length}`,
     sep,
-    '         ParylationPredictor — ANALYSIS REPORT',
-    sep,
-    `Protein        ${prot.name}`,
-    `Gene           ${prot.gene}`,
-    `UniProt ID     ${prot.uid}`,
-    `Organism       ${prot.org}`,
-    `Amino acids    ${prot.seq.length}`,
-    sep,
-    `PAR-binding domains    ${domains.length ? domains.map(d=>d.name).join(', ') : 'None detected'}`,
+    `PAR-binding domains     ${domains.length?domains.map(d=>d.name).join(', '):'None detected'}`,
     `High-conf sites (≥0.70) ${hcSites.length} sites`,
-    `Top site               ${top ? `${top.residue}${top.position} via ${top.motif}, score ${top.score.toFixed(2)}` : 'None'}`,
-    sep,
-    '',
-    'High-confidence PARylation Sites:',
+    `Top site                ${top?`${top.residue}${top.position} via ${top.motif}, score ${top.score.toFixed(2)}`:'None'}`,
+    sep,'','High-confidence PARylation Sites:',
     'Position  Residue  Motif           Score',
-    ...hcSites.slice(0,20).map(s =>
-      `${String(s.position).padEnd(10)}${s.residue.padEnd(9)}${s.motif.padEnd(16)}${s.score.toFixed(2)}`
-    ),
-    hcSites.length > 20 ? `... and ${hcSites.length-20} more` : '',
-    '',
+    ...hcSites.slice(0,25).map(s=>`${String(s.position).padEnd(10)}${s.residue.padEnd(9)}${s.motif.padEnd(16)}${s.score.toFixed(2)}`),
+    hcSites.length>25?`... and ${hcSites.length-25} more`:'','',
     'Generated by ParylationPredictor (https://gheinani.github.io/parbm-detector)',
-    `Hashemi Gheinani Lab, University of Bern · ali.hashemi@unibe.ch`,
+    'Hashemi Gheinani Lab, University of Bern — ali.hashemi@unibe.ch',
   ].join('\n');
 }
 
-function downloadTSV() {
-  const blob = new Blob([buildTSV()], { type: 'text/tab-separated-values' });
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(blob),
-    download: `${currentResult.prot.uid}_sites.tsv`
-  });
-  a.click();
+// ── HTML report builder ────────────────────────────────────────
+function buildHTMLReport(chartSVGs){
+  const{prot,domains,sites,hcSites}=currentResult,top=hcSites[0];
+  const motifCounts={};for(const s of hcSites)motifCounts[s.motif]=(motifCounts[s.motif]||0)+1;
+
+  const domainHTML=domains.length===0
+    ?'<p style="color:#8892a4">No PAR-binding domains detected via InterPro.</p>'
+    :domains.map(d=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:#1a2234;border-radius:8px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.07)">
+        <span style="background:rgba(230,57,70,0.15);color:#e63946;padding:2px 8px;border-radius:5px;font-family:monospace;font-size:12px;font-weight:700">${d.accession}</span>
+        <div><div style="font-weight:600;font-size:14px">${d.name}</div>${d.start?`<div style="color:#8892a4;font-size:12px;font-family:monospace">Residues ${d.start}–${d.end}</div>`:''}</div></div>`).join('');
+
+  const siteRows=hcSites.slice(0,50).map(s=>{
+    const tier=s.score>=0.70?'HIGH':s.score>=0.50?'MED':'LOW';
+    const col=s.score>=0.70?'#e63946':s.score>=0.50?'#f4a261':'#8892a4';
+    return`<tr><td style="font-family:monospace;padding:7px 12px">${s.position}</td><td style="padding:7px 12px;font-weight:600">${s.residue}${s.position}</td><td style="font-family:monospace;padding:7px 12px">${s.motif}</td><td style="padding:7px 12px;font-family:monospace">${s.score.toFixed(4)}</td><td style="padding:7px 12px;color:${col};font-weight:700;font-size:12px">${tier}</td></tr>`;
+  }).join('');
+
+  const panelNames={A:'Domain Architecture',B:'Confidence Landscape',C:'Hydrophobicity Profile',D:'Charge Profile',E:'Motif Breakdown',F:'Residue Composition',G:'Disorder Profile',H:'Sites by Residue Type'};
+  const panelHTML=Object.entries(chartSVGs).map(([k,svg])=>`
+    <div style="background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;margin-bottom:16px">
+      <div style="padding:10px 16px;background:#1a2234;border-bottom:1px solid rgba(255,255,255,0.07);font-size:13px;font-weight:600;color:#8892a4">
+        Panel ${k} · ${panelNames[k]||k}
+      </div>
+      <div style="padding:8px">${svg||'<p style="color:#8892a4;padding:16px;text-align:center">SVG export not available</p>'}</div>
+    </div>`).join('');
+
+  return`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ParylationPredictor Report — ${prot.name} (${prot.uid})</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,system-ui,sans-serif;background:#0b0f1a;color:#e8eaf0;line-height:1.6}
+  .header{background:linear-gradient(135deg,#1a2234 0%,#111827 100%);padding:2rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+  .header h1{font-size:1.5rem;font-weight:700;margin-bottom:.3rem}
+  .header p{color:#8892a4;font-size:.9rem}
+  .container{max-width:1000px;margin:0 auto;padding:2rem}
+  .section-title{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e63946;margin:2rem 0 .8rem}
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
+  .card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1rem 1.2rem}
+  .card .lbl{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8892a4;margin-bottom:.25rem}
+  .card .val{font-size:.95rem;font-weight:600;word-break:break-word}
+  .accent{color:#e63946} .blue{color:#4a9eff} .teal{color:#2a9d8f} .amber{color:#f4a261}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;padding:.6rem 1rem;background:#1a2234;color:#8892a4;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.08)}
+  td{padding:.55rem 1rem;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+  tr:hover td{background:#1a2234}
+  .table-wrap{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
+  .footer{text-align:center;padding:2rem;color:#8892a4;font-size:.82rem;border-top:1px solid rgba(255,255,255,0.08);margin-top:3rem}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>ParylationPredictor — Analysis Report</h1>
+  <p>Generated ${new Date().toLocaleString()} · <a href="https://gheinani.github.io/parbm-detector" style="color:#4a9eff">gheinani.github.io/parbm-detector</a></p>
+</div>
+<div class="container">
+  <div class="section-title">Protein Identity</div>
+  <div class="card-grid">
+    <div class="card"><div class="lbl">Protein</div><div class="val">${prot.name}</div></div>
+    <div class="card"><div class="lbl">Gene</div><div class="val blue">${prot.gene}</div></div>
+    <div class="card"><div class="lbl">UniProt ID</div><div class="val blue">${prot.uid}</div></div>
+    <div class="card"><div class="lbl">Organism</div><div class="val">${prot.org}</div></div>
+    <div class="card"><div class="lbl">Amino acids</div><div class="val teal">${prot.seq.length}</div></div>
+  </div>
+
+  <div class="section-title">PARylation Summary</div>
+  <div class="card-grid">
+    <div class="card"><div class="lbl">PAR-binding domains</div><div class="val accent">${domains.length?domains.map(d=>d.name).join(', '):'None detected'}</div></div>
+    <div class="card"><div class="lbl">High-conf sites (≥0.70)</div><div class="val accent">${hcSites.length} sites</div></div>
+    <div class="card"><div class="lbl">All predicted sites</div><div class="val">${sites.length} sites</div></div>
+    <div class="card"><div class="lbl">Top site</div><div class="val amber">${top?`${top.residue}${top.position} · ${top.motif} · ${top.score.toFixed(2)}`:'None'}</div></div>
+  </div>
+
+  <div class="section-title">PAR-binding Domains</div>
+  <div style="margin-bottom:1.5rem">${domainHTML}</div>
+
+  <div class="section-title">Analysis Panels (A–H)</div>
+  ${panelHTML}
+
+  <div class="section-title">High-confidence PARylation Sites</div>
+  <div class="table-wrap">
+    <table><thead><tr><th>Position</th><th>Residue</th><th>Motif</th><th>Confidence</th><th>Tier</th></tr></thead>
+    <tbody>${siteRows}</tbody></table>
+  </div>
+  ${hcSites.length>50?`<p style="color:#8892a4;font-size:.85rem;margin-bottom:1rem">Showing first 50 of ${hcSites.length} sites. See _sites.tsv for full list.</p>`:''}
+
+  <div class="section-title">Motif Distribution</div>
+  <div class="table-wrap" style="margin-bottom:1.5rem">
+    <table><thead><tr><th>Motif Type</th><th>Count</th><th>Percentage</th></tr></thead>
+    <tbody>${Object.entries(motifCounts).sort((a,b)=>b[1]-a[1]).map(([m,c])=>`<tr><td style="font-family:monospace;padding:7px 12px">${m}</td><td style="padding:7px 12px">${c}</td><td style="padding:7px 12px;color:#8892a4">${(100*c/hcSites.length).toFixed(1)}%</td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+</div>
+<div class="footer">
+  ParylationPredictor v3.1 · Hashemi Gheinani Lab, University of Bern · ali.hashemi@unibe.ch
+</div>
+</body></html>`;
 }
 
-function downloadJSON() {
-  const blob = new Blob([buildJSON()], { type: 'application/json' });
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(blob),
-    download: `${currentResult.prot.uid}_data.json`
-  });
-  a.click();
+// ── Download functions ─────────────────────────────────────────
+function downloadTSV(){
+  const b=new Blob([buildTSV()],{type:'text/tab-separated-values'});
+  Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:`${currentResult.prot.uid}_sites.tsv`}).click();
+}
+function downloadJSON(){
+  const b=new Blob([buildJSON()],{type:'application/json'});
+  Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:`${currentResult.prot.uid}_data.json`}).click();
 }
 
-async function downloadZIP() {
-  const { prot } = currentResult;
-  const zip = new JSZip();
-  const folder = zip.folder(`${prot.uid}_${prot.gene}`);
+async function downloadZIP(){
+  const{prot}=currentResult;
+  const btn=document.getElementById('zip-btn');
+  btn.textContent='⏳ Packaging…'; btn.disabled=true;
 
-  folder.file(`${prot.uid}_sites.tsv`, buildTSV());
-  folder.file(`${prot.uid}_data.json`, buildJSON());
-  folder.file(`${prot.uid}_summary.txt`, buildSummaryTXT());
+  const zip=new JSZip();
+  const folder=zip.folder(`${prot.uid}_${prot.gene}`);
 
-  // Export each Plotly chart as SVG
-  const charts = [
-    { id: 'chart-confidence', name: 'B_confidence_landscape' },
-    { id: 'chart-motif',      name: 'E_motif_breakdown' },
-    { id: 'chart-residue',    name: 'H_residue_types' },
-    { id: 'chart-hydro',      name: 'C_hydrophobicity' },
-    { id: 'chart-charge',     name: 'D_charge_profile' },
-  ];
+  // Text files
+  folder.file(`${prot.uid}_sites.tsv`,buildTSV());
+  folder.file(`${prot.uid}_data.json`,buildJSON());
+  folder.file(`${prot.uid}_summary.txt`,buildSummaryTXT());
 
-  const panelFolder = folder.folder('panels');
-  for (const c of charts) {
-    try {
-      const svg = await Plotly.toImage(document.getElementById(c.id),
-        { format: 'svg', width: 900, height: 300 });
-      // svg is a data URL like "data:image/svg+xml,..."
-      const svgContent = decodeURIComponent(svg.split(',')[1] || svg.replace('data:image/svg+xml;base64,',''));
-      panelFolder.file(`${prot.uid}_${c.name}.svg`, svgContent);
-    } catch(e) { /* skip if export fails */ }
+  // Export each chart as SVG
+  const chartMap={A:'chart-arch',B:'chart-confidence',C:'chart-hydro',D:'chart-charge',E:'chart-motif',F:'chart-composition',G:'chart-disorder',H:'chart-residue'};
+  const panelFolder=folder.folder('panels');
+  const svgData={};
+  for(const[panel,divId] of Object.entries(chartMap)){
+    try{
+      const dataUrl=await Plotly.toImage(document.getElementById(divId),{format:'svg',width:900,height:280});
+      // toImage returns data URL; for SVG it's "data:image/svg+xml,<encoded>"
+      let svgContent='';
+      if(dataUrl.startsWith('data:image/svg+xml;base64,')){
+        svgContent=atob(dataUrl.replace('data:image/svg+xml;base64,',''));
+      } else {
+        svgContent=decodeURIComponent(dataUrl.replace('data:image/svg+xml,',''));
+      }
+      panelFolder.file(`${prot.uid}_panel_${panel}.svg`,svgContent);
+      svgData[panel]=svgContent;
+    }catch(e){svgData[panel]=''}
   }
 
-  const btn = document.querySelector('.btn-dl-primary');
-  const orig = btn.textContent;
-  btn.textContent = '⏳ Packing…';
-  btn.disabled = true;
+  // HTML report with embedded SVGs
+  folder.file(`${prot.uid}_report.html`,buildHTMLReport(svgData));
 
-  zip.generateAsync({ type: 'blob' }).then(blob => {
-    const a = Object.assign(document.createElement('a'), {
-      href: URL.createObjectURL(blob),
-      download: `${prot.uid}_${prot.gene}_ParylationPredictor.zip`
-    });
-    a.click();
-    btn.textContent = orig;
-    btn.disabled = false;
-  });
+  const blob=await zip.generateAsync({type:'blob'});
+  Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(blob),
+    download:`${prot.uid}_${prot.gene}_ParylationPredictor.zip`,
+  }).click();
+
+  btn.textContent='⬇ Download ZIP — all results + HTML report';
+  btn.disabled=false;
 }
 </script>
 </body>
