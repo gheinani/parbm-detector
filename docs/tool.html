@@ -632,14 +632,27 @@ async function runAnalysis() {
     setStep('ps-predict', 'done');
 
     // Step 4 — Render
+    // Show section FIRST so Plotly gets real pixel dimensions, then render
     setStep('ps-render', 'active');
     currentResult = { prot, domains, sites, hcSites };
-    renderResults(currentResult);
-    setStep('ps-render', 'done');
 
     document.getElementById('progress-section').style.display = 'none';
-    document.getElementById('results-section').style.display = 'block';
-    document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const rs = document.getElementById('results-section');
+    rs.style.visibility = 'hidden';
+    rs.style.display = 'block';
+
+    // Populate non-chart content immediately
+    renderInfo(currentResult);
+    renderDomains(currentResult);
+    renderTable(hcSites);
+
+    // Let browser paint the layout, then render charts with correct dimensions
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    renderCharts(currentResult);
+
+    rs.style.visibility = 'visible';
+    setStep('ps-render', 'done');
+    rs.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   } catch(err) {
     showError(err.message || 'Unexpected error.');
@@ -648,37 +661,34 @@ async function runAnalysis() {
   document.getElementById('analyze-btn').disabled = false;
 }
 
-// ── Render ───────────────────────────────────────────────────────────
-function renderResults(res) {
+// ── Render helpers (called in sequence so Plotly gets real dimensions) ──
+function renderInfo(res) {
   const { prot, domains, sites, hcSites } = res;
   const top = hcSites[0];
 
-  // Info cards
   document.getElementById('info-grid').innerHTML = [
-    { label: 'Protein', value: prot.name },
-    { label: 'Gene', value: prot.gene, cls: 'blue' },
-    { label: 'UniProt ID', value: prot.uid, cls: 'blue' },
-    { label: 'Organism', value: prot.org },
+    { label: 'Protein',     value: prot.name },
+    { label: 'Gene',        value: prot.gene,                        cls: 'blue' },
+    { label: 'UniProt ID',  value: prot.uid,                         cls: 'blue' },
+    { label: 'Organism',    value: prot.org },
     { label: 'Amino acids', value: prot.seq.length.toLocaleString(), cls: 'teal' },
-  ].map(c => `
-    <div class="info-card">
-      <div class="label">${c.label}</div>
-      <div class="value ${c.cls||''}">${c.value}</div>
-    </div>`).join('');
+  ].map(c => `<div class="info-card"><div class="label">${c.label}</div>
+    <div class="value ${c.cls||''}">${c.value}</div></div>`).join('');
 
-  // Summary cards
   document.getElementById('summary-grid').innerHTML = [
-    { label: 'PAR-binding domains', value: domains.length ? domains.map(d=>d.name).join(', ') : 'None detected', cls: domains.length ? 'accent' : '' },
-    { label: 'High-conf sites (≥0.70)', value: hcSites.length + ' sites', cls: hcSites.length ? 'accent' : '' },
-    { label: 'All predicted sites', value: sites.length + ' sites' },
-    { label: 'Top site', value: top ? `${top.residue}${top.position} · ${top.motif} · ${top.score.toFixed(2)}` : 'None', cls: top ? 'amber' : '' },
-  ].map(c => `
-    <div class="info-card">
-      <div class="label">${c.label}</div>
-      <div class="value ${c.cls||''}">${c.value}</div>
-    </div>`).join('');
+    { label: 'PAR-binding domains',       value: domains.length ? domains.map(d=>d.name).join(', ') : 'None detected', cls: domains.length ? 'accent' : '' },
+    { label: 'High-conf sites (≥0.70)',   value: hcSites.length + ' sites', cls: hcSites.length ? 'accent' : '' },
+    { label: 'All predicted sites',       value: sites.length + ' sites' },
+    { label: 'Top site',                  value: top ? `${top.residue}${top.position} · ${top.motif} · ${top.score.toFixed(2)}` : 'None', cls: top ? 'amber' : '' },
+  ].map(c => `<div class="info-card"><div class="label">${c.label}</div>
+    <div class="value ${c.cls||''}">${c.value}</div></div>`).join('');
 
-  // Domains
+  document.getElementById('dl-label').textContent =
+    `${prot.name} (${prot.uid}) — ${hcSites.length} high-confidence sites`;
+}
+
+function renderDomains(res) {
+  const { domains } = res;
   const dl = document.getElementById('domain-list');
   if (domains.length === 0) {
     dl.innerHTML = '<p class="no-domain">No PAR-binding domains detected via InterPro.</p>';
@@ -692,16 +702,6 @@ function renderResults(res) {
         </div>
       </div>`).join('');
   }
-
-  // Charts
-  renderCharts(res);
-
-  // Table
-  renderTable(hcSites);
-
-  // Download label
-  document.getElementById('dl-label').textContent =
-    `${prot.name} (${prot.uid}) — ${hcSites.length} high-confidence sites`;
 }
 
 function renderCharts(res) {
