@@ -8,14 +8,13 @@ version = "3.1.0"
 description = "ParylationPredictor – predict PARylation sites and detect PAR-binding domains in proteins"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Dr. Ali Hashemi Gheinani", email = "ali.hashemi@unibe.ch"},
 ]
 keywords = ["PAR-binding", "PARylation", "ADP-ribosylation", "protein", "bioinformatics", "proteomics", "PARP"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
