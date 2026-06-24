@@ -1,5 +1,5 @@
 """
-PARBM Detector v3.0 – PAR-binding Motif Detection Tool
+ParylationPredictor v3.1 — PARylation Site Prediction Tool
 
 Identifies PAR-binding domains and predicts PARylation sites from
 UniProt IDs, raw sequences, or FASTA files.

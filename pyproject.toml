@@ -3,16 +3,16 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "parbm-detector"
-version = "3.0.0"
-description = "PAR-binding Motif Detection Tool – identify PAR-binding domains and predict PARylation sites"
+name = "parylation-predictor"
+version = "3.1.0"
+description = "ParylationPredictor – predict PARylation sites and detect PAR-binding domains in proteins"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "PARBM Detector Team"},
+    {name = "Dr. Ali Hashemi Gheinani", email = "ali.hashemi@unibe.ch"},
 ]
-keywords = ["PAR-binding", "PARylation", "protein", "bioinformatics", "proteomics", "ADP-ribosylation"]
+keywords = ["PAR-binding", "PARylation", "ADP-ribosylation", "protein", "bioinformatics", "proteomics", "PARP"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -31,8 +31,13 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "black>=22.0", "flake8>=4.0"]
 
+[project.urls]
+Homepage = "https://gheinani.github.io/parbm-detector"
+Repository = "https://github.com/gheinani/parbm-detector"
+"Bug Tracker" = "https://github.com/gheinani/parbm-detector/issues"
+
 [project.scripts]
-parbm-detect = "parbm_detector_pkg.cli:main"
+parylation-predictor = "parbm_detector_pkg.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
